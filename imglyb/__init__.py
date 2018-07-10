@@ -1,8 +1,12 @@
 from __future__ import print_function
 
+from .version import __version__
+
 import sys
 
 __all__ = ( 'to_imglib', 'to_imglib_argb', 'to_numpy' )
+
+__imglib2_imglyb_version__ = '0.1.0'
 
 def _init_jvm_options():
 
@@ -12,7 +16,7 @@ def _init_jvm_options():
 	
 	import os
 
-	IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib:imglib2-imglyb:0.1.0-SNAPSHOT'
+	IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib:imglib2-imglyb:{}'.format(__imglib2_imglyb_version__)
 	PYJNIUS_JAR_STR         = 'PYJNIUS_JAR'
 	IMGLYB_JAR_CACHE_DIR    = os.path.join(os.getenv('HOME'), '.imglyb-jars')
 	LOCAL_MAVEN_REPO        = os.getenv('M2_REPO', os.path.join(os.getenv('HOME'), '.m2', 'repository'))
