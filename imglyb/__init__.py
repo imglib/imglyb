@@ -2,11 +2,13 @@ from __future__ import print_function
 
 from .version import __version__
 
+import os
+
 import sys
 
 __all__ = ( 'to_imglib', 'to_imglib_argb', 'to_numpy' )
 
-__imglib2_imglyb_version__ = '0.1.0'
+__imglib2_imglyb_version__ = os.getenv('IMGLIB2_IMGLYB_VERSION' ,'0.1.0')
 
 def _init_jvm_options():
 
