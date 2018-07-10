@@ -6,10 +6,10 @@ from distutils.command.build_py import build_py
 
 setup(
     name='imglyb',
-    version='0.0.1',
+    version='0.1.0',
     author='Philipp Hanslovsky',
     author_email='hanslovskyp@janelia.hhmi.org',
     description='A simple python module to bring together the worlds of numpy (Python) and ImgLib2 (Java).',
     packages=['imglyb'],
-    install_requires=['numpy', 'jnius']
+    install_requires=['numpy', 'jnius', 'jrun']
 )
