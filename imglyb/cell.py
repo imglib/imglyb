@@ -11,16 +11,20 @@ SoftRefLoaderCache          = autoclass('net.imglib2.cache.ref.SoftRefLoaderCach
 CachedCellImg               = autoclass('net.imglib2.cache.img.CachedCellImg')
 GuardedStrongRefLoaderCache = autoclass('net.imglib2.cache.ref.GuardedStrongRefLoaderCache')
 PythonHelpers               = autoclass('net.imglib2.python.Helpers')
+VolatileViews               = autoclass('bdv.util.volatiles.VolatileViews')
 
-
-def as_cached_cell_img(func, cell_grid, dtype, cache_generator=SoftRefLoaderCache, volatile=False):
-    loader      = CacheLoaderFromFunction(func, cell_grid)
+def as_cached_cell_img(func, cell_grid, dtype, cache_generator=SoftRefLoaderCache, volatile_access=False):
+    loader      = CacheLoaderFromFunction(func, cell_grid, volatile_access)
     cache       = cache_generator().withLoader(loader)
     t           = for_np_dtype(dtype, volatile=False)
-    img         = CachedCellImg(cell_grid, t.getEntitiesPerPixel(), cache, as_array_access(np.zeros((0,), dtype=dtype)))
+    img         = CachedCellImg(cell_grid, t.getEntitiesPerPixel(), cache, as_array_access(np.zeros((0,), dtype=dtype), volatile=volatile_access))
     linked_type = t.getNativeTypeFactory().createLinkedType(img)
     img.setLinkedType(linked_type)
     return img
+
+def wrap_volatile(cell_img, dirty=False):
+    return PythonHelpers.createVolatileCachedCellImg(cell_img, dirty)
+    # return VolatileViews.wrapAsVolatile(cell_img)
 
 
 class CacheLoaderFromFunction(PythonJavaClass):
@@ -34,14 +38,21 @@ class CacheLoaderFromFunction(PythonJavaClass):
 
     @java_method('(Ljava/lang/Object;)Ljava/lang/Object;', name='get')
     def get(self, index):
+        # print('c', 1)
         chunk      = self.func(index)
+        # print('c', 2)
         refGuard   = imglyb.util.ReferenceGuard(chunk)
+        # print('c', 3)
         address    = chunk.ctypes.data
+        # print('c', 4)
 
         try:
             pos    = PythonHelpers.cellMin(self.cell_grid, index)
+            # print(5)
             target = as_array_access(chunk, volatile=self.volatile)
+            # print(7)
             cell   = Cell(chunk.shape[::-1], pos, target)
+            # print(8)
         except JavaException as e:
             print('Name        --', e.classname)
             print('Message     --', e.innermessage)
@@ -59,7 +70,7 @@ try:
             dask_array,
             chunk_size=None,
             cache_generator=SoftRefLoaderCache,
-            volatile=False):
+            volatile_access=False):
         if not dask.array.core._check_regular_chunks(dask_array.chunks):
             raise ValueError('Expected dask array with regular chunking but got {}'.format(dask_array.chunks))
         slices     = dask.array.core.slices_from_chunks(dask_array.chunks)
@@ -70,7 +81,7 @@ try:
             cell_grid       = PythonHelpers.makeGrid(dims, block_size),
             dtype           = dask_array.dtype,
             cache_generator = cache_generator,
-            volatile        = volatile
+            volatile_access  = volatile_access
         )
 
 except ImportError as e:

@@ -8,7 +8,7 @@ import sys
 
 __all__ = ( 'to_imglib', 'to_imglib_argb', 'to_numpy' )
 
-__imglib2_imglyb_version__ = os.getenv('IMGLIB2_IMGLYB_VERSION' ,'0.2.1')
+__imglib2_imglyb_version__ = os.getenv('IMGLIB2_IMGLYB_VERSION' ,'0.2.2-SNAPSHOT')
 
 def _init_jvm_options():
 
