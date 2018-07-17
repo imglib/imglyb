@@ -3,7 +3,7 @@ import numpy as np
 import imglyb
 from .accesses import *
 from .types import for_np_dtype
-from jnius import autoclass, PythonJavaClass, java_method
+from jnius import autoclass, PythonJavaClass, java_method, cast
 
 Cell                        = autoclass('net.imglib2.img.cell.Cell')
 CellGrid                    = autoclass('net.imglib2.img.cell.CellGrid')
@@ -62,7 +62,8 @@ class CacheLoaderFromFunction(PythonJavaClass):
                 for line in e.stacktrace:
                     print(line)
             raise e
-        return cell
+
+        return cast('net.imglib2.img.cell.Cell', cell)
 
 try:
     import dask
