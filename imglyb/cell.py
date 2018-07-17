@@ -20,6 +20,7 @@ def as_cached_cell_img(func, cell_grid, dtype, cache_generator=SoftRefLoaderCach
     img         = CachedCellImg(cell_grid, t.getEntitiesPerPixel(), cache, as_array_access(np.zeros((0,), dtype=dtype), volatile=volatile_access))
     linked_type = t.getNativeTypeFactory().createLinkedType(img)
     img.setLinkedType(linked_type)
+    img.randomAccess()
     return img
 
 def wrap_volatile(cell_img, dirty=False):
