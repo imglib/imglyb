@@ -27,6 +27,8 @@ for dtype in (np.uint8, np.int8, np.uint16, np.int16, np.uint32, np.int32, np.ui
 import dask.array
 shape  = (100, 200, 300)
 chunks = (64, 64, 64)
+# to see that it irregular chunks fail, uncomment next line:
+# chunks = (64, 64, (64,36,100,100))
 data   = dask.array.from_array(np.random.randint(255, size=shape, dtype=np.uint8), chunks=chunks).rechunk(chunks)
 img    = imglyb.cell.dask_array_as_cached_cell_img(data, volatile=False)
 

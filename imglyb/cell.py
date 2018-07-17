@@ -57,6 +57,8 @@ try:
             chunk_size=None,
             cache_generator=SoftRefLoaderCache,
             volatile=False):
+        if not dask.array.core._check_regular_chunks(dask_array.chunks):
+            raise ValueError('Expected dask array with regular chunking but got {}'.format(dask_array.chunks))
         slices     = dask.array.core.slices_from_chunks(dask_array.chunks)
         dims       = dask_array.shape
         block_size = chunk_size if chunk_size else tuple(c[0] for c in dask_array.chunks)
