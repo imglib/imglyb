@@ -43,9 +43,12 @@ class CacheLoaderFromFunction(PythonJavaClass):
             target = as_array_access(chunk, volatile=self.volatile)
             cell   = Cell(chunk.shape[::-1], pos, target)
         except JavaException as e:
-            print('Name    --', e.classname)
-            print('Message --', e.innermessage)
+            print('Name        --', e.classname)
+            print('Message     --', e.innermessage)
             print('Stack trace --', e.stacktrace)
+            if e.stacktrace:
+                for line in e.stacktrace:
+                    print(line)
             raise e
         return cell
 
