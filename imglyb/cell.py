@@ -27,7 +27,6 @@ def as_cached_cell_img(func, cell_grid, dtype, cache_generator=SoftRefLoaderCach
 
 def wrap_volatile(cell_img, dirty=False):
     return PythonHelpers.createVolatileCachedCellImg(cell_img, dirty)
-    # return VolatileViews.wrapAsVolatile(cell_img)
 
 class MakeAccess(PythonJavaClass):
     __javainterfaces__ = ['java/util/function/Function']
@@ -52,21 +51,14 @@ class CacheLoaderFromFunction(PythonJavaClass):
 
     @java_method('(Ljava/lang/Object;)Ljava/lang/Object;', name='get')
     def get(self, index):
-        # print('c', 1)
         chunk      = self.func(index)
-        # print('c', 2)
         refGuard   = imglyb.util.ReferenceGuard(chunk)
-        # print('c', 3)
         address    = chunk.ctypes.data
-        # print('c', 4)
 
         try:
             pos    = PythonHelpers.cellMin(self.cell_grid, index)
-            # print(5)
             target = as_array_access(chunk, volatile=self.volatile)
-            # print(7)
             cell   = Cell(chunk.shape[::-1], pos, target)
-            # print(8)
         except JavaException as e:
             print('Name        --', e.classname)
             print('Message     --', e.innermessage)
