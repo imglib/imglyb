@@ -38,37 +38,10 @@ chunks = (64, 64, 64)
 # chunks = (64, 64, (64,36,100,100))
 data   = dask.array.from_array(np.random.randint(255, size=shape, dtype=np.uint8), chunks=chunks).rechunk(chunks)
 img    = imglyb.cell.dask_array_as_cached_cell_img(data, volatile_access=True)
-# cache  = img.getCache()
-# t      = cast('net.imglib2.type.NativeType', img.randomAccess().get().createVariable())
-# crInv  = autoclass('bdv.img.cache.CreateInvalidVolatileCell').get(img.getCellGrid(), t, False)
-# queue  = autoclass('bdv.util.volatiles.SharedQueue')(1, 1)
-# vcache = autoclass('net.imglib2.cache.ref.WeakRefVolatileCache')(cache, queue, crInv)
-# ucache = vcache.unchecked()
-# cache.unchecked().get(cast('java.lang.Long', 1))
-vol    = imglyb.cell.wrap_volatile(img)
-# try:
-#     vol    = imglyb.cell.wrap_volatile(img)
-# except JavaException as e:
-#     print(e)
-#     print(e.innermessage)
-#     print(e.stacktrace)
-#
-# try:
-#     ra = img.randomAccess()
-# except Exception as e:
-#     print("OGL")
-#     print(e)
-#     print(e.innermessage)
-#     print(e.stacktrace)
-#     print("BOGL")
-# print(4)
-
-# print(img)
-
-img = PythonHelpers.randomBytes(shape, chunks)
-
 slices = dask.array.core.slices_from_chunks(data.chunks)
 
+
+# alternative way generate cell img:
 def make_access(index):
     try:
         chunk    = data[slices[index]].compute()
@@ -86,16 +59,13 @@ def make_access(index):
 
         raise e
 access_generator = imglyb.cell.MakeAccess(make_access)
-
-img = PythonHelpers.imgFromFunc(
+img              = PythonHelpers.imgFromFunc(
     shape,
     chunks,
     access_generator,
     imglyb.types.UnsignedByteType(),
     imglyb.accesses.as_array_access(data[slices[0]].compute(), volatile=True))
 
-# for i, c in enumerate(dask.array.core.slices_from_chunks(data.chunks)):
-#     PythonHelpers.getFromCache(img.getCache(), i)
 
 
 
