@@ -3,7 +3,7 @@ import numpy as np
 import imglyb
 from .accesses import *
 from .types import for_np_dtype
-from jnius import autoclass, PythonJavaClass, java_method, cast
+from jnius import autoclass, PythonJavaClass, java_method, cast, JavaException
 
 Cell                        = autoclass('net.imglib2.img.cell.Cell')
 CellGrid                    = autoclass('net.imglib2.img.cell.CellGrid')
@@ -12,6 +12,8 @@ CachedCellImg               = autoclass('net.imglib2.cache.img.CachedCellImg')
 GuardedStrongRefLoaderCache = autoclass('net.imglib2.cache.ref.GuardedStrongRefLoaderCache')
 PythonHelpers               = autoclass('net.imglib2.python.Helpers')
 VolatileViews               = autoclass('bdv.util.volatiles.VolatileViews')
+VolatileByteArray           = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileByteArray')
+Random                      = autoclass('java.util.Random')
 
 def as_cached_cell_img(func, cell_grid, dtype, cache_generator=SoftRefLoaderCache, volatile_access=False):
     loader      = CacheLoaderFromFunction(func, cell_grid, volatile_access)
@@ -26,6 +28,17 @@ def as_cached_cell_img(func, cell_grid, dtype, cache_generator=SoftRefLoaderCach
 def wrap_volatile(cell_img, dirty=False):
     return PythonHelpers.createVolatileCachedCellImg(cell_img, dirty)
     # return VolatileViews.wrapAsVolatile(cell_img)
+
+class MakeAccess(PythonJavaClass):
+    __javainterfaces__ = ['java/util/function/Function']
+
+    def __init__(self, func):
+        super(MakeAccess, self).__init__()
+        self.func = func
+
+    @java_method('(Ljava/lang/Object;)Ljava/lang/Object;')
+    def apply(self, t):
+        return self.func(t)
 
 
 class CacheLoaderFromFunction(PythonJavaClass):

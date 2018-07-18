@@ -1,3 +1,5 @@
+import dask.array
+
 import jnius_config
 jnius_config.add_options('-Xmx60g')
 
@@ -11,6 +13,8 @@ import imglyb.cell
 import imglyb.util
 
 from jnius import cast, JavaException, autoclass
+
+PythonHelpers               = autoclass('net.imglib2.python.Helpers')
 
 for dtype in (np.uint8, np.int8, np.uint16, np.int16, np.uint32, np.int32, np.uint64, np.int64, np.float32, np.float64):
     arr = np.arange(10, dtype=dtype)
@@ -59,7 +63,41 @@ vol    = imglyb.cell.wrap_volatile(img)
 #     print("BOGL")
 # print(4)
 
-# print(img) 
+# print(img)
+
+img = PythonHelpers.randomBytes(shape, chunks)
+
+slices = dask.array.core.slices_from_chunks(data.chunks)
+
+def make_access(index):
+    try:
+        chunk    = data[slices[index]].compute()
+        refGuard = imglyb.util.ReferenceGuard(chunk)
+        address  = chunk.ctypes.data
+        target   = imglyb.accesses.as_array_access(chunk, volatile=True)
+        return target
+    except JavaException as e:
+        print('exception    ', e)
+        print('cause        ', e.__cause__ )
+        print('inner message', e.innermessage)
+        if e.stacktrace:
+            for line in e.stacktrace:
+                print(line)
+
+        raise e
+access_generator = imglyb.cell.MakeAccess(make_access)
+
+img = PythonHelpers.imgFromFunc(
+    shape,
+    chunks,
+    access_generator,
+    imglyb.types.UnsignedByteType(),
+    imglyb.accesses.as_array_access(data[slices[0]].compute(), volatile=True))
+
+# for i, c in enumerate(dask.array.core.slices_from_chunks(data.chunks)):
+#     PythonHelpers.getFromCache(img.getCache(), i)
+
+
 
 try:
     # pass
