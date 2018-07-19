@@ -12,7 +12,7 @@ import imglyb.accesses
 import imglyb.cell
 import imglyb.util
 
-from jnius import cast, JavaException, autoclass
+from jnius import cast, JavaException, autoclass, PythonJavaClass, java_method
 
 PythonHelpers               = autoclass('net.imglib2.python.Helpers')
 
@@ -42,7 +42,42 @@ slices = dask.array.core.slices_from_chunks(data.chunks)
 
 
 # alternative way generate cell img:
-def make_access(index):
+# def make_access(index):
+#     try:
+#         chunk    = data[slices[index]].compute()
+#         refGuard = imglyb.util.ReferenceGuard(chunk)
+#         address  = chunk.ctypes.data
+#         target   = imglyb.accesses.as_array_access(chunk, volatile=True)
+#         return target
+#     except JavaException as e:
+#         print('exception    ', e)
+#         print('cause        ', e.__cause__ )
+#         print('inner message', e.innermessage)
+#         if e.stacktrace:
+#             for line in e.stacktrace:
+#                 print(line)
+
+#         raise e
+# access_generator = imglyb.cell.MakeAccess(make_access)
+# img              = PythonHelpers.imgFromFunc(
+#     shape,
+#     chunks,
+#     access_generator,
+#     imglyb.types.UnsignedByteType(),
+#     imglyb.accesses.as_array_access(data[slices[0]].compute(), volatile=True))
+
+class MakeAccessBiFunction(PythonJavaClass):
+    __javainterfaces__ = ['java/util/function/BiFunction']
+
+    def __init__(self, func):
+        super(MakeAccessBiFunction, self).__init__()
+        self.func = func
+
+    @java_method('(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;')
+    def apply(self, t, u):
+        return self.func(t, u)
+
+def make_access(index, size):
     try:
         chunk    = data[slices[index]].compute()
         refGuard = imglyb.util.ReferenceGuard(chunk)
@@ -56,10 +91,10 @@ def make_access(index):
         if e.stacktrace:
             for line in e.stacktrace:
                 print(line)
-
         raise e
-access_generator = imglyb.cell.MakeAccess(make_access)
-img              = PythonHelpers.imgFromFunc(
+
+access_generator = MakeAccessBiFunction(make_access)
+img              = PythonHelpers.imgWithCellLoaderFromFunc(
     shape,
     chunks,
     access_generator,
