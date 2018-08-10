@@ -15,7 +15,7 @@ If you are interested in using `imglyb`, have a look at the [imglyb-examples](ht
 
 ## Installation
 
-`imlgyb` is available on conda for Linux, OSX, and Windows:
+`imglyb` is available on conda for Linux, OSX, and Windows:
 ```bash
 conda install -c hanslovsky imglyb
 ```
