@@ -43,15 +43,14 @@ def _init_jvm_options():
 			jnius_config.add_classpath( path )
 
 	jnius_config.add_classpath( PYJNIUS_JAR )
-	imglyb_jars = jrun.jrun.resolve_dependencies(
-                endpoint=IMGLIB2_IMGLYB_ENDPOINT,
+	primary_endpoint, workspace = jrun.jrun.resolve_dependencies(
+                IMGLIB2_IMGLYB_ENDPOINT,
                 cache_dir=IMGLYB_JAR_CACHE_DIR,
                 m2_repo=LOCAL_MAVEN_REPO,
                 repositories=RELEVANT_MAVEN_REPOS,
                 verbose=2
         )
-	for jar in imglyb_jars:
-		jnius_config.add_classpath(jar)
+	jnius_config.add_classpath(os.path.join(workspace, '*'))
 
 	JVM_OPTIONS_STR = 'JVM_OPTIONS'
 
