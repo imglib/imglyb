@@ -23,13 +23,14 @@ def _init_jvm_options():
     import os
 
     IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib:imglib2-imglyb:{}'.format(__imglib2_imglyb_version__)
-    PYJNIUS_JAR_STR = 'PYJNIUS_JAR'
-    IMGLYB_JAR_CACHE_DIR = os.path.join(os.getenv('HOME'), '.imglyb-jars')
-    LOCAL_MAVEN_REPO = os.getenv('M2_REPO', os.path.join(os.getenv('HOME'), '.m2', 'repository'))
-    RELEVANT_MAVEN_REPOS = {
-        'imagej.public': 'https://maven.imagej.net/content/groups/public',
-        'saalfeldlab': 'https://saalfeldlab.github.io/maven'
+    PYJNIUS_JAR_STR         = 'PYJNIUS_JAR'
+    IMGLYB_JAR_CACHE_DIR    = os.path.join(os.getenv('HOME'), '.imglyb-jars')
+    LOCAL_MAVEN_REPO        = os.getenv('M2_REPO', os.path.join(os.getenv('HOME'), '.m2', 'repository'))
+    RELEVANT_MAVEN_REPOS    = {
+        'imagej.public' : 'https://maven.imagej.net/content/groups/public',
+        'saalfeldlab'   : 'https://saalfeldlab.github.io/maven'
     }
+    imglyb_config.add_repositories(RELEVANT_MAVEN_REPOS)
 
     if PYJNIUS_JAR_STR not in globals():
         try:
@@ -54,7 +55,7 @@ def _init_jvm_options():
         '+'.join([IMGLIB2_IMGLYB_ENDPOINT] + imglyb_config.get_endpoints()),
         cache_dir=IMGLYB_JAR_CACHE_DIR,
         m2_repo=LOCAL_MAVEN_REPO,
-        repositories=RELEVANT_MAVEN_REPOS,
+        repositories=imglyb_config.get_repositories(),
         verbose=2
     )
     jnius_config.add_classpath(os.path.join(workspace, '*'))
