@@ -10,6 +10,8 @@ __all__ = ( 'to_imglib', 'to_imglib_argb', 'to_numpy' )
 
 __imglib2_imglyb_version__ = os.getenv('IMGLIB2_IMGLYB_VERSION' ,'0.3.0')
 
+__additional_endpoints_variable__ = "ADDITIONAL_ENDPOINTS"
+
 def _init_jvm_options():
 
 	import jnius_config
@@ -43,8 +45,9 @@ def _init_jvm_options():
 			jnius_config.add_classpath( path )
 
 	jnius_config.add_classpath( PYJNIUS_JAR )
+	additional_endpoints = os.getenv(__additional_endpoints_variable__, None)
 	primary_endpoint, workspace = jrun.jrun.resolve_dependencies(
-                IMGLIB2_IMGLYB_ENDPOINT,
+                '+'.join([IMGLIB2_IMGLYB_ENDPOINT, additional_endpoints]) if additional_endpoints else IMGLIB2_IMGLYB_ENDPOINT,
                 cache_dir=IMGLYB_JAR_CACHE_DIR,
                 m2_repo=LOCAL_MAVEN_REPO,
                 repositories=RELEVANT_MAVEN_REPOS,
