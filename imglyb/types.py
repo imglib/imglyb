@@ -27,6 +27,7 @@ VolatileUnsignedIntType   = autoclass('net.imglib2.type.volatiles.VolatileUnsign
 VolatileLongType          = autoclass('net.imglib2.type.volatiles.VolatileLongType')
 VolatileUnsignedLongType  = autoclass('net.imglib2.type.volatiles.VolatileUnsignedLongType')
 
+
 def for_np_dtype(dtype, volatile=False):
     if dtype == np.uint8:
         return VolatileUnsignedByteType() if volatile else UnsignedByteType()
