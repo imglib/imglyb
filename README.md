@@ -53,35 +53,40 @@ python setup.py build_ext --inplace -f
 python setup.py install
 ```
 
-All other instructions should work independent of the operating system.
-```bash
-# get imglib2-unsafe-0.0.1-SNAPSHOT
-git clone https://github.com/imglib/imglib2-unsafe
-cd imglib2-unsafe
-mvn clean install
-```
-
 ```bash
 cd /path/to/imglyb
 python setup.py install
 # alternatively
 pip install .
 ```
+Install jrun through conda
+```
+conda install -c hanslovsky jrun
+```
+or install from the latest `python` branch:
+```
+git clone https://github.com/hanslovsky/jrun
+git checkout python
+pip install .
+```
+
+
 
 ## Run
 
 ### Requirements
+All requirements will be met if you install from my conda channel `hanslovsky`.
  * PyJNIus
  * Java 8
  * Maven
  * numpy
+ * jrun
 
 ### Run
 If you do not use conda you need to set your environment before using `imglib2-imglyb`:
 ```bash
 export JAVA_HOME=/path/to/JAVA_HOME # not necessary if using conda
 export PYJNIUS_JAR=/path/to/pyjnius/build/pyjnius.jar # not necessary if using conda
-export IMGLYB_JAR=/path/to/imglib2-imglyb/target/imglib2-imglyb-<VERSION>.jar # not necessary if using conda
 ```
 Note that, in your python files, the line
 ```python
