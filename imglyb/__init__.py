@@ -24,8 +24,8 @@ def _init_jvm_options():
 
     IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib:imglib2-imglyb:{}'.format(__imglib2_imglyb_version__)
     PYJNIUS_JAR_STR         = 'PYJNIUS_JAR'
-    IMGLYB_JAR_CACHE_DIR    = os.path.join(os.getenv('HOME'), '.imglyb-jars')
-    LOCAL_MAVEN_REPO        = os.getenv('M2_REPO', os.path.join(os.getenv('HOME'), '.m2', 'repository'))
+    IMGLYB_JAR_CACHE_DIR    = os.path.join(os.path.expanduser('~'), '.imglyb-jars')
+    LOCAL_MAVEN_REPO        = os.getenv('M2_REPO', os.path.join(os.path.expanduser('~'), '.m2', 'repository'))
     RELEVANT_MAVEN_REPOS    = {
         'imagej.public' : 'https://maven.imagej.net/content/groups/public',
         'saalfeldlab'   : 'https://saalfeldlab.github.io/maven'
