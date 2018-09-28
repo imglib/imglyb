@@ -65,9 +65,8 @@ conda install -c hanslovsky jrun
 ```
 or install from the latest `python` branch:
 ```
-git clone https://github.com/hanslovsky/jrun
-git checkout python
-pip install .
+git clone https://github.com/ctrueden/jrun
+pip install jrun
 ```
 
 
