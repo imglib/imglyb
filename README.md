@@ -17,7 +17,7 @@ If you are interested in using `imglyb`, have a look at the [imglyb-examples](ht
 
 `imglyb` is available on conda for Linux, OSX, and Windows:
 ```bash
-conda install -c hanslovsky imglyb
+conda install -c conda-forge -c hanslovsky imglyb
 ```
 Re-activate the environment after installation to correctly set the environment variables if necessary.
 If this does not work for you, please follow the build instructions below.
