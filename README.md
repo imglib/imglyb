@@ -33,6 +33,14 @@ OpenJDK 8, Maven, and Ant are available through anaconda if necessary.
  * Cython
 
 ### Build
+You can install PyJNIus through conda from the `conda-forge` channel:
+```bash
+conda install -c conda-forge pyjnius
+```
+This will use OpenJDK from conda-forge. If you prefer to use a different JDK, 
+e.g. to use a newer release or for JavaFX projects, you can build PyJNIus from
+source on your local machine:
+
 Clone (or download) the PyJNIus repository:
 ```bash
 # get PyJNIus
@@ -42,16 +50,26 @@ cd pyjnius
 In order to build `pyjnius.jar` and install the pyjnius python package, run on Linux or OSX:
 ```bash
 make # creates build/pyjnius.jar
-export JAVA_HOME=/path/to/jdk  # optional
+export JAVA_HOME=/path/to/jdk
 make tests # optional
 python setup.py install
+# Set the appropriate environment variables:
+export JAVA_HOME=/path/to/jdk
+export PYJNIUS_JAR=/path/to/pyjnius/build/pyjnius.jar
 ```
 On Windows:
-```bash
+```cmd
 ant all
 python setup.py build_ext --inplace -f
 python setup.py install
+:: Set the appropriate environment variables:
+SET "PYJNIUS_JAR=path\to\pyjnius\pyjnius.jar"
+SET "JAVA_HOME=path\to\jdk"
+SET "JDK_HOME=%JAVA_HOME%"
 ```
+Note that it can be useful to automate setting up the environment,
+either through a script or by adding the appropriate lines to a shell
+config file, e.g. `~/.bashrc` or `~/.zshrc` for bash on Linux and OSX.
 
 ```bash
 cd /path/to/imglyb
