@@ -22,17 +22,27 @@ conda install -c conda-forge -c hanslovsky imglyb
 Re-activate the environment after installation to correctly set the environment variables if necessary.
 If this does not work for you, please follow the build instructions below.
 
-### Requirements
-OpenJDK 8, Maven, and Ant are available through anaconda if necessary.
+### Dependencies
+If you choose to install imglyb from source (instead of conda) make sure that these dependencies are present at runtime:
  * Python 3
- * Java 8
+ * Java 8 JDK (JRE is not enough)
  * [Apache Maven](https://maven.apache.org/)
- * [Apache Ant](http://ant.apache.org/)
- * [imglib2-unsafe](https://github.com/imglib/imglib2-unsafe)
- * pyjnius.jar (see instructions below)
- * Cython
+ * [PyJNIus with pyjnius.jar](https://github.com/kivy/pyjnius) with [appropriate environment variables](https://github.com/imglib/imglyb#build-instructions)
+ * [jrun](https://github.com/ctrueden/jrun)
 
 ### Build
+
+#### Build Dependencies
+ * Python 3
+ * Java 8
+ * [Apache Ant](http://ant.apache.org/)
+ * Cython
+ * conda (optional, if installing dependencies from conda)
+ * git (optional, if installing dependencies from git)
+ * GNU Make (Linux/OSX only)
+
+#### Build Instructions
+
 You can install PyJNIus through conda from the `conda-forge` channel:
 ```bash
 conda install -c conda-forge pyjnius
@@ -73,8 +83,6 @@ config file, e.g. `~/.bashrc` or `~/.zshrc` for bash on Linux and OSX.
 
 ```bash
 cd /path/to/imglyb
-python setup.py install
-# alternatively
 pip install .
 ```
 Install jrun through conda
@@ -91,20 +99,6 @@ pip install jrun
 
 ## Run
 
-### Requirements
-All requirements will be met if you install from my conda channel `hanslovsky`.
- * PyJNIus
- * Java 8
- * Maven
- * numpy
- * jrun
-
-### Run
-If you do not use conda you need to set your environment before using `imglib2-imglyb`:
-```bash
-export JAVA_HOME=/path/to/JAVA_HOME # not necessary if using conda
-export PYJNIUS_JAR=/path/to/pyjnius/build/pyjnius.jar # not necessary if using conda
-```
 Note that, in your python files, the line
 ```python
 import imglyb
