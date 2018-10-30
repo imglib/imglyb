@@ -16,5 +16,5 @@ setup(
     description='A simple python module to bring together the worlds of numpy (Python) and ImgLib2 (Java).',
     packages=['imglyb'],
     py_modules=['imglyb_config'],
-    install_requires=['numpy', 'jnius', 'jrun']
+    install_requires=['numpy', 'pyjnius', 'jrun']
 )
