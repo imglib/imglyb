@@ -11,7 +11,7 @@ This means **shared memory** between `numpy` and `ImgLib2`, i.e. any `ImgLib2` a
 For example, Python users can now make use of the [BigDataViewer](https://github.com/bigdataviewer/bigdataviewer-core) to visualize dense volumetric data.
 If you are interested in using `imglyb`, have a look at the [imglyb-examples](https://github.com/hanslovsky/imglyb-examples) repository and extend the examples as needed! In addition to that, [multiple](https://github.com/hanslovsky/imglyb-learnathon) [notebooks](https://nbviewer.jupyter.org/github/imagej/tutorials/blob/master/notebooks/3_-_Advanced_usage/3_-_ImgLyb_-_ImgLib2_-_with_-_scikit-image.ipynb) demonstrate the general use.
 
-
+**Note**: [`NEP 18`](http://www.numpy.org/neps/nep-0018-array-function-protocol.html) has the potential to improve `numpy` - `imglib` interoperability, especially when converting `imglib2` data structures to `numpy`.
 
 ## Installation
 
