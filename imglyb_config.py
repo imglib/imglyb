@@ -1,6 +1,6 @@
 _endpoints = []
 _additional_repositories = {}
-version = '0.3.3'
+version = '0.3.4dev'
 
 def add_endpoints(*endpoints):
     global _endpoints
