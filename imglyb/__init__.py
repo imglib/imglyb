@@ -22,6 +22,10 @@ def _init_jvm_options():
 
     import os
 
+    if jnius_config.vm_running:
+        print('JVM is already running, will not add relevant endpoints to classpath -- required classes might not be on classpath.')
+        return jnius_config
+
     IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib:imglib2-imglyb:{}'.format(__imglib2_imglyb_version__)
     PYJNIUS_JAR_STR         = 'PYJNIUS_JAR'
     IMGLYB_JAR_CACHE_DIR    = os.path.join(os.path.expanduser('~'), '.imglyb-jars')
