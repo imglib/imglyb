@@ -44,7 +44,7 @@ def _init_jvm_options():
             raise e
 
     if 'classpath' in globals():
-        jnius_config.add_classpath(classpath)
+        jnius_config.add_classpath(globals()['classpath'])
 
     CLASSPATH_STR = 'CLASSPATH'
     if CLASSPATH_STR in os.environ:
