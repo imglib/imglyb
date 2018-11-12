@@ -1,1 +1,1 @@
-__version__ = '0.3.3dev'
+from imglyb_config import version as __version__

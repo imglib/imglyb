@@ -1,22 +1,21 @@
-import jnius_config
-
-additional_endpoints = []
-additional_repositories = {}
+_endpoints = []
+_additional_repositories = {}
+version = '0.3.3dev'
 
 def add_endpoints(*endpoints):
-    global additional_endpoints
-    additional_endpoints.extend(endpoints)
+    global _endpoints
+    _endpoints.extend(endpoints)
 
 def get_endpoints():
-    global additional_endpoints
-    return additional_endpoints
+    global _endpoints
+    return _endpoints
 
 def add_repositories(*args, **kwargs):
-    global additional_repositories
+    global _additional_repositories
     for arg in args:
-        additional_repositories.update(arg)
-    additional_repositories.update(kwargs)
+        _additional_repositories.update(arg)
+        _additional_repositories.update(kwargs)
 
 def get_repositories():
-    global additional_repositories
-    return additional_repositories
+    global _additional_repositories
+    return _additional_repositories
