@@ -18,7 +18,7 @@ def _init_jvm_options():
 
     import jnius_config
 
-    import jrun.jrun
+    import jrun
 
     import os
 
@@ -51,7 +51,7 @@ def _init_jvm_options():
     additional_endpoints = os.getenv(__additional_endpoints_variable__, None)
     if (additional_endpoints):
         imglyb_config.add_endpoints(additional_endpoints)
-    primary_endpoint, workspace = jrun.jrun.resolve_dependencies(
+    primary_endpoint, workspace = jrun.resolve_dependencies(
         '+'.join([IMGLIB2_IMGLYB_ENDPOINT] + imglyb_config.get_endpoints()),
         cache_dir=IMGLYB_JAR_CACHE_DIR,
         m2_repo=LOCAL_MAVEN_REPO,
