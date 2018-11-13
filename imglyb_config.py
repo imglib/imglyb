@@ -1,21 +1,16 @@
-_endpoints = []
-_additional_repositories = {}
+import os
+
+__all__ = ('set_imglib2_imglyb_version', 'get_imglib2_imglyb_version')
+
 version = '0.3.4dev'
 
-def add_endpoints(*endpoints):
-    global _endpoints
-    _endpoints.extend(endpoints)
+_default_imglib2_imglyb_version = '0.3.0'
+_imglib2_imglyb_version         = os.getenv('IMGLIB2_IMGLYB_VERSION', _default_imglib2_imglyb_version)
 
-def get_endpoints():
-    global _endpoints
-    return _endpoints
+def set_imglib2_imglyb_version(version):
+    global _imglib2_imglyb_version
+    _imglib2_imglyb_version = version
 
-def add_repositories(*args, **kwargs):
-    global _additional_repositories
-    for arg in args:
-        _additional_repositories.update(arg)
-        _additional_repositories.update(kwargs)
-
-def get_repositories():
-    global _additional_repositories
-    return _additional_repositories
+def get_imglib2_imglyb_version():
+    global _imglib2_imglyb_version
+    return _imglib2_imglyb_version
