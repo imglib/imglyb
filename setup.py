@@ -1,8 +1,4 @@
-import os
-import glob
-from subprocess import call
-from distutils.core import setup
-from distutils.command.build_py import build_py
+from setuptools import setup
 
 version={}
 with open('imglyb/version.py', 'r') as f:
