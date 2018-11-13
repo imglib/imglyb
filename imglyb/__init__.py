@@ -25,10 +25,10 @@ def _init_jvm_options():
         'imagej.public' : 'https://maven.imagej.net/content/groups/public',
         'saalfeldlab'   : 'https://saalfeldlab.github.io/maven'
     }
-    for _, repo in scyjava_config.get_repositories():
-        if repo == RELEVANT_MAVEN_REPOS['imagej.public']:
+    for _, repo in scyjava_config.get_repositories().items():
+        if 'imagej.public' in RELEVANT_MAVEN_REPOS and repo == RELEVANT_MAVEN_REPOS['imagej.public']:
             del RELEVANT_MAVEN_REPOS['imagej.public']
-        if repo == RELEVANT_MAVEN_REPOS['saalfeldlab']:
+        if 'saalfeldlab' in RELEVANT_MAVEN_REPOS and repo == RELEVANT_MAVEN_REPOS['saalfeldlab']:
             del RELEVANT_MAVEN_REPOS['saalfeldlab']
     scyjava_config.add_repositories(RELEVANT_MAVEN_REPOS)
     scyjava_config.add_endpoints(IMGLIB2_IMGLYB_ENDPOINT)
