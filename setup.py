@@ -5,6 +5,7 @@ with open('imglyb/version.py', 'r') as f:
     exec(f.read(), version)
 
 setup(
+    python_requires='>=3',
     name='imglyb',
     version=version['__version__'],
     author='Philipp Hanslovsky',
