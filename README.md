@@ -1,6 +1,6 @@
 [![Join the chat at https://gitter.im/imglib2-imglyb](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/imglib2-imglyb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-# imglib2-imglyb
+# imglyb
 
 `imglyb` aims at connecting two worlds that have been seperated for too long:
  * Python with [numpy](https://github.com/numpy/numpy)
