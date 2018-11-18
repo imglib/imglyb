@@ -2,7 +2,7 @@ import os
 
 __all__ = ('set_imglib2_imglyb_version', 'get_imglib2_imglyb_version')
 
-version = '0.3.4'
+version = '0.3.5dev'
 
 _default_imglib2_imglyb_version = '0.3.0'
 _imglib2_imglyb_version         = os.getenv('IMGLIB2_IMGLYB_VERSION', _default_imglib2_imglyb_version)
