@@ -28,7 +28,7 @@ If you choose to install imglyb from source (instead of conda) make sure that th
  * Java 8 JDK (JRE is not enough)
  * [Apache Maven](https://maven.apache.org/)
  * [PyJNIus with pyjnius.jar](https://github.com/kivy/pyjnius) with [appropriate environment variables](https://github.com/imglib/imglyb#build-instructions)
- * [jrun](https://github.com/ctrueden/jrun)
+ * [scyjava](https://github.com/scijava/scyjava)
 
 ### Build
 
@@ -85,14 +85,14 @@ config file, e.g. `~/.bashrc` or `~/.zshrc` for bash on Linux and OSX.
 cd /path/to/imglyb
 pip install .
 ```
-Install jrun through conda
+Install scyjava through conda
 ```
-conda install -c hanslovsky jrun
+conda install -c hanslovsky scyjava
 ```
 or install from the latest `python` branch:
 ```
-git clone https://github.com/ctrueden/jrun
-pip install jrun
+git clone https://github.com/scijava/scyjava
+pip install scyjava
 ```
 
 
