@@ -4,8 +4,8 @@ __all__ = ('set_imglib2_imglyb_version', 'get_imglib2_imglyb_version')
 
 __major__   = 0
 __minor__   = 3
-__patch__   = 5
-__tag__     = ''
+__patch__   = 6
+__tag__     = 'dev0'
 __version__ = f'{__major__}.{__minor__}.{__patch__}.{__tag__}'.strip('.')
 
 class _Version(object):
