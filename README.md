@@ -1,5 +1,17 @@
 [![Join the chat at https://gitter.im/imglib2-imglyb](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/imglib2-imglyb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+[![Conda](https://img.shields.io/conda/dn/conda-forge/imglyb)](https://github.com/conda-forge/imglyb-feedstock)
+
+[![License](https://img.shields.io/pypi/l/imglyb.svg)](https://github.com/imglib2/imglyb/raw/master/LICENSE)
+CTR START HERE
+[![Build Status](https://api.cirrus-ci.com/github/Napari/napari.svg)](https://cirrus-ci.com/napari/napari)
+[![codecov](https://codecov.io/gh/napari/napari/branch/master/graph/badge.svg)](https://codecov.io/gh/napari/napari)
+[![Python Version](https://img.shields.io/pypi/pyversions/napari.svg)](https://python.org)
+[![PyPI](https://img.shields.io/pypi/v/napari.svg)](https://pypi.org/project/napari)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/napari.svg)](https://pypistats.org/packages/napari)
+[![Development Status](https://img.shields.io/pypi/status/napari.svg)](https://github.com/napari/napari)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
+
 # imglyb
 
 `imglyb` aims at connecting two worlds that have been seperated for too long:
