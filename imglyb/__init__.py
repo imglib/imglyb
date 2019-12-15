@@ -20,7 +20,7 @@ def _init_jvm_options():
                         'In case of failure, try importing imglyb before scyjava or jnius')
         return jnius_config
 
-    IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib:imglib2-imglyb:{}'.format(imglib2_imglyb_version)
+    IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib2:imglib2-imglyb:{}'.format(imglib2_imglyb_version)
     RELEVANT_MAVEN_REPOS    = {
         'scijava.public' : scyjava_config.maven_scijava_repository()
     }

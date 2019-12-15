@@ -32,7 +32,7 @@ _version = _Version()
 
 version = _version.version()
 
-_default_imglib2_imglyb_version = '0.3.0'
+_default_imglib2_imglyb_version = '0.3.1'
 _imglib2_imglyb_version         = os.getenv('IMGLIB2_IMGLYB_VERSION', _default_imglib2_imglyb_version)
 
 def set_imglib2_imglyb_version(version):
