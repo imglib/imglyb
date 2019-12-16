@@ -1,4 +1,5 @@
-import h5py
+import dask.array as da
+import numpy as np
 import scyjava_config
 import threading
 import time
@@ -8,16 +9,14 @@ scyjava_config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
 import imglyb
 from jnius import autoclass, JavaException
 
-path = '/home/hanslovskyp/Downloads/sample_A_padded_20160501.hdf'
-
 BdvFunctions        = imglyb.util.BdvFunctions
 VolatileTypeMatcher = autoclass('bdv.util.volatiles.VolatileTypeMatcher')
 VolatileViews       = autoclass('bdv.util.volatiles.VolatileViews')
 
-file       = h5py.File(path, 'r')
-ds         = file['volumes/raw']
+shape      = (150, 100, 125)
 block_size = (32,) * 3
-img        = imglyb.as_cell_img(ds, block_size, access_type='array')
+data       = da.random.randint(0, 256, size=shape, chunks=block_size, dtype=np.uint8)
+img        = imglyb.as_cell_img(data, block_size, access_type='array', chunk_as_array=lambda x: x.compute())
 try:
     vimg   = VolatileViews.wrapAsVolatile(img)
 except JavaException as e:

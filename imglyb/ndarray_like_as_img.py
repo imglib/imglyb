@@ -45,16 +45,17 @@ def chunk_index_to_slices(shape, chunk_shape, cell_index):
     return slices
 
 
-def get_chunk(array, chunk_shape, chunk_index):
-
+def get_chunk(array, chunk_shape, chunk_index, chunk_as_array):
     slices = chunk_index_to_slices(array.shape, chunk_shape, chunk_index)
-    return np.ascontiguousarray(array[slices])
+    sliced = array[slices]
+    array  = chunk_as_array(sliced)
+    return np.ascontiguousarray(array)
 
 
-def get_chunk_access(array, chunk_shape, index, use_volatile_access=False):
+def get_chunk_access(array, chunk_shape, index, chunk_as_array, use_volatile_access=True):
 
     try:
-        chunk = get_chunk(array, chunk_shape, index)
+        chunk = get_chunk(array, chunk_shape, index, chunk_as_array)
         target = accesses.as_array_access(chunk, volatile=use_volatile_access)
         return target
 
@@ -68,10 +69,10 @@ def get_chunk_access(array, chunk_shape, index, use_volatile_access=False):
         raise e
 
 
-def get_chunk_access_unsafe(array, chunk_shape, index):
+def get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array):
 
     try:
-        chunk  = get_chunk(array, chunk_shape, index)
+        chunk  = get_chunk(array, chunk_shape, index, chunk_as_array)
         img    = to_imglib(chunk)
         return cast('net.imglib2.img.array.ArrayImg', img.getSource()).update(None)
 
@@ -85,7 +86,7 @@ def get_chunk_access_unsafe(array, chunk_shape, index):
         raise e
 
 
-def as_cell_img(array, chunk_shape, *, access_type='native', **kwargs):
+def as_cell_img(array, chunk_shape, *, access_type='native', chunk_as_array=lambda x: x, **kwargs):
     access_type_function_mapping = {
         'array':  as_cell_img_with_array_accesses,
         'native': as_cell_img_with_native_accesses
@@ -94,14 +95,14 @@ def as_cell_img(array, chunk_shape, *, access_type='native', **kwargs):
     if access_type not in access_type_function_mapping:
         raise Exception(f'Invalid access type: `{access_type}\'. Choose one of {access_type_function_mapping.keys()}')
 
-    return access_type_function_mapping[access_type](array, chunk_shape, **kwargs)
+    return access_type_function_mapping[access_type](array, chunk_shape, chunk_as_array, **kwargs)
 
 
 # TODO is it bad style to use **kwargs to ignore unexpected kwargs?
-def as_cell_img_with_array_accesses(array, chunk_shape, *, use_volatile_access=False, **kwargs):
+def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, *, use_volatile_access=True, **kwargs):
 
     access_generator = MakeAccessFunction(
-        lambda index: get_chunk_access(array, chunk_shape, index, use_volatile_access=use_volatile_access))
+        lambda index: get_chunk_access(array, chunk_shape, index, chunk_as_array, use_volatile_access=use_volatile_access))
 
     shape = array.shape[::-1]
     chunk_shape = chunk_shape[::-1]
@@ -111,18 +112,19 @@ def as_cell_img_with_array_accesses(array, chunk_shape, *, use_volatile_access=F
         chunk_shape,
         access_generator,
         types.for_np_dtype(array.dtype, volatile=False),
+        # TODO do not load first block here, just create a length-one access
         accesses.as_array_access(
-            get_chunk(array, chunk_shape, 0),
+            get_chunk(array, chunk_shape, 0, chunk_as_array=chunk_as_array),
             volatile=use_volatile_access))
 
     return img
 
 
 # TODO is it bad style to use **kwargs to ignore unexpected kwargs?
-def as_cell_img_with_native_accesses(array, chunk_shape, **kwargs):
+def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, **kwargs):
 
     access_generator = MakeAccessFunction(
-        lambda index: get_chunk_access_unsafe(array, chunk_shape, index))
+        lambda index: get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array))
 
     shape = array.shape[::-1]
     chunk_shape = chunk_shape[::-1]
