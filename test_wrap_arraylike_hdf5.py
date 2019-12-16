@@ -16,10 +16,8 @@ VolatileViews       = autoclass('bdv.util.volatiles.VolatileViews')
 
 file       = h5py.File(path, 'r')
 ds         = file['volumes/raw']
-block_size = (64, 64, 64)
+block_size = (32,) * 3
 img        = imglyb.as_cell_img(ds, block_size, access_type='array', use_volatile_access=True)
-typeClass  = cast('java.lang.Object', img.randomAccess().get())
-print(f'type: {typeClass.getClass().getName()} {VolatileTypeMatcher.getVolatileTypeForType(img.randomAccess().get())}')
 try:
     vimg       = VolatileViews.wrapAsVolatile(img)
 except JavaException as e:
