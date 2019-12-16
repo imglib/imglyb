@@ -1,17 +1,41 @@
+import scyjava_config
+scyjava_config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
+
 import imglyb
 import numpy as np
 from jnius import cast
 
-data       = np.arange(6).reshape((3, 2))
+Views = imglyb.util.Views
+
+shape      = (3, 5)
+data       = np.arange(np.prod(shape)).reshape(shape)
 block_size = (2, 2)
-img        = imglyb.arraylike_to_img2(data, block_size, volatile=False)
-# weirdly, volatile=True produces an error when calling img.cursor()
+img        = imglyb.as_cell_img(data, block_size, access_type='array', use_volatile_access=True)
 
 print(data)
 print(img.toString())
-cursor = img.cursor()
+cursor = Views.flatIterable(img).cursor()
+
+print('Cell Img')
 while cursor.hasNext():
     print(cursor.next().toString())
 
+print()
+print('ndarray')
 for d in data.flat:
     print(d)
+print(data)
+
+print()
+print('cells')
+cursor = cast('net.imglib2.IterableInterval', img.getCells()).cursor()
+cellIdx = 0
+while cursor.hasNext():
+    cell = cursor.next()
+    access = cell.getData()
+    print(f'Cell index: {cellIdx} {access}')
+    size = cell.size()
+    for idx in range(0, size):
+        print(access.getValue(idx))
+    cellIdx += 1
+    break

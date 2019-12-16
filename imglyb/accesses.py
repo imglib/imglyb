@@ -30,6 +30,7 @@ IntUnsafe           = autoclass('net.imglib2.img.basictypelongaccess.unsafe.IntU
 LongUnsafe          = autoclass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
 ShortUnsafe         = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
 
+
 # does not work with strided accesses, currently
 def as_array_access(ndarray, volatile=False):
     if ndarray.dtype == np.uint8 or ndarray.dtype == np.int8:

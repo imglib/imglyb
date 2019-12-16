@@ -39,8 +39,9 @@ config = _init_jvm_options()
 
 from .imglib_ndarray import ImgLibReferenceGuard as _ImgLibReferenceGuard
 from .ndarray_like_as_img import \
-    as_img as arraylike_to_img, \
-    as_img2 as arraylike_to_img2
+    as_cell_img, \
+    as_cell_img_with_array_accesses, \
+    as_cell_img_with_native_accesses
 from .util import \
     to_imglib, \
     to_imglib_argb
