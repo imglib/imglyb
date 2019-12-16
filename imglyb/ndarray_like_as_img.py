@@ -110,7 +110,7 @@ def as_cell_img_with_array_accesses(array, chunk_shape, *, use_volatile_access=F
         shape,
         chunk_shape,
         access_generator,
-        types.for_np_dtype(array.dtype, volatile=use_volatile_access),
+        types.for_np_dtype(array.dtype, volatile=False),
         accesses.as_array_access(
             get_chunk(array, chunk_shape, 0),
             volatile=use_volatile_access))
