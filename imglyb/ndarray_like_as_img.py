@@ -1,3 +1,5 @@
+import threading
+
 from . import accesses
 from . import types
 from .util import to_imglib
@@ -7,6 +9,11 @@ import math
 import numpy as np
 
 PythonHelpers = autoclass('net.imglib2.python.Helpers')
+
+_global_set = set()
+
+def identity(x):
+    return x
 
 
 class MakeAccessFunction(PythonJavaClass):
@@ -18,7 +25,8 @@ class MakeAccessFunction(PythonJavaClass):
 
     @java_method('(J)Ljava/lang/Object;')
     def apply(self, index):
-        return self.func(index)
+        access = self.func(index)
+        return access
 
 
 def chunk_index_to_slices(shape, chunk_shape, cell_index):
@@ -44,29 +52,34 @@ def chunk_index_to_slices(shape, chunk_shape, cell_index):
 
     return slices
 
-
+_get_chunk_lock = threading.RLock()
 def get_chunk(array, chunk_shape, chunk_index, chunk_as_array):
-    slices = chunk_index_to_slices(array.shape, chunk_shape, chunk_index)
-    sliced = array[slices]
-    array  = chunk_as_array(sliced)
-    return np.ascontiguousarray(array)
+    with _get_chunk_lock:
+        slices = chunk_index_to_slices(array.shape, chunk_shape, chunk_index)
+        sliced = array[slices]
+        array  = chunk_as_array(sliced)
+        return np.ascontiguousarray(array)
 
 
+_get_chunk_access_lock = threading.RLock()
 def get_chunk_access(array, chunk_shape, index, chunk_as_array, use_volatile_access=True):
 
-    try:
-        chunk = get_chunk(array, chunk_shape, index, chunk_as_array)
-        target = accesses.as_array_access(chunk, volatile=use_volatile_access)
-        return target
+    with _get_chunk_access_lock:
+        try:
+            chunk = get_chunk(array, chunk_shape, index, chunk_as_array)
+            # img   = to_imglib(chunk)
+            # return cast('net.imglib2.img.array.ArrayImg', img.getSource()).update(None)
+            target = accesses.as_array_access(chunk, volatile=use_volatile_access)
+            return target
 
-    except JavaException as e:
-        print("exception    ", e)
-        print("cause        ", e.__cause__)
-        print("inner message", e.innermessage)
-        if e.stacktrace:
-            for line in e.stacktrace:
-                print(line)
-        raise e
+        except JavaException as e:
+            print("exception    ", e)
+            print("cause        ", e.__cause__)
+            print("inner message", e.innermessage)
+            if e.stacktrace:
+                for line in e.stacktrace:
+                    print(line)
+            raise e
 
 
 def get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array):
@@ -86,7 +99,7 @@ def get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array):
         raise e
 
 
-def as_cell_img(array, chunk_shape, *, access_type='native', chunk_as_array=lambda x: x, **kwargs):
+def as_cell_img(array, chunk_shape, *, access_type='native', chunk_as_array=identity, **kwargs):
     access_type_function_mapping = {
         'array':  as_cell_img_with_array_accesses,
         'native': as_cell_img_with_native_accesses
@@ -100,9 +113,38 @@ def as_cell_img(array, chunk_shape, *, access_type='native', chunk_as_array=lamb
 
 # TODO is it bad style to use **kwargs to ignore unexpected kwargs?
 def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, *, use_volatile_access=True, **kwargs):
+    # Does not work:
+    # def make_my_get_chunk():
+    #     def my_get_chunk(array, chunk_shape, chunk_index, chunk_as_array):
+    #         slices = chunk_index_to_slices(array.shape, chunk_shape, chunk_index)
+    #         sliced = array[slices]
+    #         array  = chunk_as_array(sliced)
+    #         return np.ascontiguousarray(array)
+    #     return my_get_chunk
+    #
+    # def make_my_get_chunk_access():
+    #     def my_get_chunk_access(array, chunk_shape, index, chunk_as_array, use_volatile_access=True):
+    #
+    #         try:
+    #             chunk = make_my_get_chunk()(array, chunk_shape, index, chunk_as_array)
+    #             # img   = to_imglib(chunk)
+    #             # return cast('net.imglib2.img.array.ArrayImg', img.getSource()).update(None)
+    #             target = accesses.as_array_access(chunk, volatile=use_volatile_access)
+    #             return target
+    #
+    #         except JavaException as e:
+    #             print("exception    ", e)
+    #             print("cause        ", e.__cause__)
+    #             print("inner message", e.innermessage)
+    #             if e.stacktrace:
+    #                 for line in e.stacktrace:
+    #                     print(line)
+    #             raise e
+    #     return my_get_chunk_access
 
     access_generator = MakeAccessFunction(
         lambda index: get_chunk_access(array, chunk_shape, index, chunk_as_array, use_volatile_access=use_volatile_access))
+    _global_set.add(access_generator)
 
     shape = array.shape[::-1]
     chunk_shape = chunk_shape[::-1]
@@ -125,6 +167,7 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, **kwarg
 
     access_generator = MakeAccessFunction(
         lambda index: get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array))
+    _global_set.add(access_generator)
 
     shape = array.shape[::-1]
     chunk_shape = chunk_shape[::-1]

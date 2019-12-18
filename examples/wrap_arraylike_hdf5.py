@@ -1,4 +1,5 @@
 import h5py
+import numpy as np
 import scyjava_config
 import threading
 import time
@@ -32,8 +33,11 @@ bdv = BdvFunctions.show(vimg, 'raw')
 
 def runUntilBdvDoesNotShow():
     panel = bdv.getBdvHandle().getViewerPanel()
+    idx = 0
     while panel.isShowing():
+        print(np.mean(ds[idx:idx+block_size[0], :block_size[1], :block_size[2]]))
         time.sleep(0.3)
+        idx = (idx + 1) % 5
 
 
 threading.Thread(target=runUntilBdvDoesNotShow).start()

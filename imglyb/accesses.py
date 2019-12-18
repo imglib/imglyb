@@ -3,6 +3,7 @@ import numpy as np
 import imglyb
 from jnius import autoclass
 
+import time
 
 Accesses            = autoclass('tmp.net.imglib2.img.basictypeaccess.Accesses')
 
@@ -49,6 +50,7 @@ def as_array_access(ndarray, volatile=False):
 def _as_array_access(ndarray, src_clazz, tgt_clazz):
     src = src_clazz(ndarray.ctypes.data)
     tgt = tgt_clazz(ndarray.size)
+    # print('wat', ndarray.ctypes.data)
     Accesses.copyAny(src, 0, tgt, 0, ndarray.size)
     return tgt
 

@@ -10,15 +10,19 @@ import imglyb
 from jnius import autoclass, JavaException
 
 BdvFunctions        = imglyb.util.BdvFunctions
+BdvOptions          = imglyb.util.BdvOptions
 VolatileTypeMatcher = autoclass('bdv.util.volatiles.VolatileTypeMatcher')
 VolatileViews       = autoclass('bdv.util.volatiles.VolatileViews')
 
 shape      = (150, 100, 125)
 block_size = (32,) * 3
-data       = da.random.randint(0, 256, size=shape, chunks=block_size, dtype=np.uint8)
-img        = imglyb.as_cell_img(data, block_size, access_type='array', chunk_as_array=lambda x: x.compute())
+data1      = da.random.randint(0, 256, size=shape, chunks=block_size, dtype=np.uint8)
+img1       = imglyb.as_cell_img(data1, block_size, access_type='array', chunk_as_array=lambda x: x.compute())
+data2      = da.random.randint(0, 256, size=shape, chunks=block_size, dtype=np.uint8)
+img2       = imglyb.as_cell_img(data2, block_size, access_type='array', chunk_as_array=lambda x: x.compute())
 try:
-    vimg   = VolatileViews.wrapAsVolatile(img)
+    vimg1  = VolatileViews.wrapAsVolatile(img1)
+    vimg2  = VolatileViews.wrapAsVolatile(img2)
 except JavaException as e:
     print(e.classname)
     print(e.innermessage)
@@ -27,7 +31,8 @@ except JavaException as e:
             print(s)
     raise e
 
-bdv = BdvFunctions.show(vimg, 'raw')
+bdv = BdvFunctions.show(vimg1, 'raw1')
+BdvFunctions.show(vimg2, 'raw2', BdvOptions.options().addTo(bdv))
 
 def runUntilBdvDoesNotShow():
     panel = bdv.getBdvHandle().getViewerPanel()
