@@ -85,11 +85,11 @@ def _to_imglib(source):
     address = _get_address(source)
     if not source.dtype in numpy_dtype_to_conversion_method:
         raise NotImplementedError("Cannot convert dtype to ImgLib2 type yet: {}".format(source.dtype))
-    elif source.flags['CARRAY']:
-        return numpy_dtype_to_conversion_method[source.dtype](address, *source.shape[::-1])
+    elif np.isfortran(source):
+        return numpy_dtype_to_conversion_method[source.dtype](address, *source.shape)
     else:
-        stride = np.array(source.strides[::-1]) / source.itemsize
-        return numpy_dtype_to_conversion_with_stride_method[source.dtype](address, tuple(stride), source.shape[::-1])
+        stride = np.array(source.strides) / source.itemsize
+        return numpy_dtype_to_conversion_with_stride_method[source.dtype](address, tuple(stride), source.shape)
 
 
 def to_imglib_argb(source):
@@ -100,11 +100,11 @@ def _to_imglib_argb(source):
     address = _get_address(source)
     if not (source.dtype == np.dtype('int32') or source.dtype == np.dtype('uint32')):
         raise NotImplementedError("source.dtype must be int32 or uint32")
-    if source.flags['CARRAY']:
-        return NumpyToImgLibConversions.toARGB(address, *source.shape[::-1])
+    elif np.isfortran(source):
+        return NumpyToImgLibConversions.toARGB(address, *source.shape)
     else:
-        stride = np.array(source.strides[::-1]) / source.itemsize
-        return NumpyToImgLibConversionsWithStride.toARGB(address, tuple(stride), source.shape[::-1])
+        stride = np.array(source.strides) / source.itemsize
+        return NumpyToImgLibConversionsWithStride.toARGB(address, tuple(stride), source.shape)
 
 
 def options2D():
