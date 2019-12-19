@@ -32,10 +32,10 @@ def _init_jvm_options():
 
     import scyjava
 
-    return jnius_config, scyjava
+    return jnius_config
 
 
-config, _ = _init_jvm_options()
+config = _init_jvm_options()
 
 from .imglib_ndarray import ImgLibReferenceGuard as _ImgLibReferenceGuard
 from .util import \
