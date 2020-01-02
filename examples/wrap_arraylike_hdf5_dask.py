@@ -26,7 +26,7 @@ def compute_and_store_also(x):
 
 
 BdvFunctions        = imglyb.util.BdvFunctions
-BdvOptions        = imglyb.util.BdvOptions
+BdvOptions          = imglyb.util.BdvOptions
 VolatileTypeMatcher = autoclass('bdv.util.volatiles.VolatileTypeMatcher')
 VolatileViews       = autoclass('bdv.util.volatiles.VolatileViews')
 
