@@ -1,19 +1,17 @@
 from __future__ import division
 
-import ctypes
-
-from collections import defaultdict
+import logging
+import numpy as np
 
 from jnius import autoclass, PythonJavaClass, java_method
 
-import numpy as np
-
-import sys
+_logger = logging.getLogger(__name__)
 
 __all__ = (
     'to_imglib',
     'to_imglib_argb',
-    'options2D'
+    'options2D',
+    'RunnableFromFunc'
 )
 
 # java
@@ -143,3 +141,15 @@ class GenericMouseMotionListener(PythonJavaClass):
     @java_method('(Ljava/awt/event/MouseEvent;)V')
     def mouseMoved(self, e):
         self.mouse_moved(e)
+
+class RunnableFromFunc(PythonJavaClass):
+    __javainterfaces__ = ['java/lang/Runnable']
+
+    def __init__(self, func):
+        super(RunnableFromFunc, self).__init__()
+        self.func = func
+
+    @java_method('()V')
+    def run(self):
+        _logger.debug('Running function %s', self.func)
+        self.func()

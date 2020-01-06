@@ -20,7 +20,7 @@ def _init_jvm_options():
                         'In case of failure, try importing imglyb before scyjava or jnius')
         return jnius_config
 
-    IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib:imglib2-imglyb:{}'.format(imglib2_imglyb_version)
+    IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib2:imglib2-imglyb:{}'.format(imglib2_imglyb_version)
     RELEVANT_MAVEN_REPOS    = {
         'scijava.public' : scyjava_config.maven_scijava_repository()
     }
@@ -32,12 +32,16 @@ def _init_jvm_options():
 
     import scyjava
 
-    return jnius_config, scyjava
+    return jnius_config
 
 
-config, _ = _init_jvm_options()
+config = _init_jvm_options()
 
 from .imglib_ndarray import ImgLibReferenceGuard as _ImgLibReferenceGuard
+from .ndarray_like_as_img import \
+    as_cell_img, \
+    as_cell_img_with_array_accesses, \
+    as_cell_img_with_native_accesses
 from .util import \
     to_imglib, \
     to_imglib_argb

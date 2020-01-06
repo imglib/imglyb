@@ -1,4 +1,3 @@
-import imglyb
 from imglyb import util
 from jnius import autoclass, cast
 
