@@ -18,10 +18,17 @@ _logger = logging.getLogger(__name__)
 
 
 def identity(x):
+    """
+    Returns the input
+    """
     return x
 
 
 class MakeAccessFunction(PythonJavaClass):
+    """
+    Implements a java `LongFunction` that can be passed into `PythonHelpers.imgFromFunc` and
+    `PythonHelpers.imgWithCellLoaderFromFunc`.
+    """
     __javainterfaces__ = ['java/util/function/LongFunction']
 
     def __init__(self, func):
@@ -114,6 +121,23 @@ def _get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, referenc
 
 
 def as_cell_img(array, chunk_shape, cache, *, access_type='native', chunk_as_array=identity, **kwargs):
+    """
+    Wrap an arbitrary ndarray-like object as an ImgLib2 cached cell img.
+    :param array: The arbitrary ndarray-like object to be wrapped
+    :param chunk_shape: The shape of `array`. In many cases, this is just `array.shape`.
+    :param cache: Can be `int` or an ImgLib2 `LoaderCache`. If `int` (recommended), use a
+    :py:data:`imglyb.caches.BoundedSoftRefLoaderCache` that is bounded to `cache` elements. `LoaderCache`s are available
+    in :py:mod:`imglyb.caches`.
+    :param access_type: Can be either `'native'` or `'array'`. If `'native'`, use the native memory of the contiguous
+     ndarray of a chunk directly. If `'array'`, copy the native memory into a Java array and use the Java array as
+     access.
+    :param chunk_as_array: Defines conversion of a chunk created by slicing into a :py:class:`numpy.ndarray`.
+    :param kwargs: Optional arguments that may depend on the value passed for `access_type`, e.g `use_volatile_access`
+    is relevant only for `access_type == 'array'`.
+    :return: A tuple that holds the wrapped image at `0` and a reference store at `1` to ensure that Python references
+    are not being garbage collected while still in use in the JVM. the reference store should stay in scope as long as
+    the wrapped image is intended to be used.
+    """
     access_type_function_mapping = {
         'array':  as_cell_img_with_array_accesses,
         'native': as_cell_img_with_native_accesses
@@ -137,6 +161,7 @@ def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, cache, *
     shape = array.shape[::-1]
     chunk_shape = chunk_shape[::-1]
 
+    # TODO use imgFromFunc instead of imgWithCellLoaderFromFunct here
     img = PythonHelpers.imgWithCellLoaderFromFunc(
         shape,
         chunk_shape,
