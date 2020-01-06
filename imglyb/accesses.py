@@ -47,10 +47,10 @@ def as_array_access(ndarray, volatile=False):
     elif ndarray.dtype == np.float64:
         return _as_array_access(ndarray, DoubleUnsafe, lambda n : VolatileDoubleArray(n, True) if volatile else DoubleArray(n))
 
+
 def _as_array_access(ndarray, src_clazz, tgt_clazz):
     src = src_clazz(ndarray.ctypes.data)
     tgt = tgt_clazz(ndarray.size)
-    # print('wat', ndarray.ctypes.data)
     Accesses.copyAny(src, 0, tgt, 0, ndarray.size)
     return tgt
 
