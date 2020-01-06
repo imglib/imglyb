@@ -34,7 +34,7 @@ class MakeAccessFunction(PythonJavaClass):
         return access
 
 
-def chunk_index_to_slices(shape, chunk_shape, cell_index):
+def _chunk_index_to_slices(shape, chunk_shape, cell_index):
 
     grid_dimensions = tuple(
         int(math.ceil(s/sh))
@@ -58,16 +58,16 @@ def chunk_index_to_slices(shape, chunk_shape, cell_index):
     return slices
 
 
-def get_chunk(array, chunk_shape, chunk_index, chunk_as_array):
-    slices = chunk_index_to_slices(array.shape, chunk_shape, chunk_index)
+def _get_chunk(array, chunk_shape, chunk_index, chunk_as_array):
+    slices = _chunk_index_to_slices(array.shape, chunk_shape, chunk_index)
     sliced = array[slices]
     array = chunk_as_array(sliced)
     return np.ascontiguousarray(array)
 
 
-def get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volatile_access=True):
+def _get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volatile_access=True):
     try:
-        chunk = get_chunk(array, chunk_shape, index, chunk_as_array)
+        chunk = _get_chunk(array, chunk_shape, index, chunk_as_array)
         dtype = for_np_dtype(chunk.dtype, volatile=False)
         ptype = dtype.getNativeTypeFactory().getPrimitiveType()
         # TODO check ratio for integral value first?
@@ -88,10 +88,10 @@ def get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volati
         raise e
 
 
-def get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, reference_store):
+def _get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, reference_store):
 
     try:
-        chunk = np.ascontiguousarray(get_chunk(array, chunk_shape, index, chunk_as_array))
+        chunk = np.ascontiguousarray(_get_chunk(array, chunk_shape, index, chunk_as_array))
         address = _get_address(chunk)
         ref_id = reference_store.get_next_id()
 
@@ -100,7 +100,7 @@ def get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, reference
             reference_store.remove_reference(ref_id)
         owner = RunnableFromFunc(remove_reference)
         reference_store.add_reference(ref_id, (chunk, owner))
-        access = access_factory_for(chunk.dtype, owning=False)(address, owner)
+        access = _access_factory_for(chunk.dtype, owning=False)(address, owner)
         return access
 
     except JavaException as e:
@@ -130,7 +130,7 @@ def as_cell_img(array, chunk_shape, cache, *, access_type='native', chunk_as_arr
 # TODO is it bad style to use **kwargs to ignore unexpected kwargs?
 def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, cache, *, use_volatile_access=True, **kwargs):
     access_generator = MakeAccessFunction(
-        lambda index: get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volatile_access=use_volatile_access))
+        lambda index: _get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volatile_access=use_volatile_access))
     reference_store = ReferenceStore()
     reference_store.add_reference_with_new_id(access_generator)
 
@@ -144,7 +144,7 @@ def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, cache, *
         types.for_np_dtype(array.dtype, volatile=False),
         # TODO do not load first block here, just create a length-one access
         accesses.as_array_access(
-            get_chunk(array, chunk_shape, 0, chunk_as_array=chunk_as_array),
+            _get_chunk(array, chunk_shape, 0, chunk_as_array=chunk_as_array),
             volatile=use_volatile_access),
         cache)
 
@@ -156,7 +156,7 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, cache, 
 
     reference_store = ReferenceStore()
     access_generator = MakeAccessFunction(
-        lambda index: get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, reference_store))
+        lambda index: _get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, reference_store))
     reference_store.add_reference_with_new_id(access_generator)
 
     shape = array.shape[::-1]
@@ -168,7 +168,7 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, cache, 
             chunk_shape,
             access_generator,
             types.for_np_dtype(array.dtype, volatile=False),
-            access_factory_for(array.dtype, owning=False)(1, None),
+            _access_factory_for(array.dtype, owning=False)(1, None),
             cache)
 
     except JavaException as e:
@@ -184,54 +184,54 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, cache, 
     return img, reference_store
 
 # non-owning
-ByteUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
-CharUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
-DoubleUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
-FloatUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
-IntUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
-LongUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
-ShortUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
+_ByteUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
+_CharUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
+_DoubleUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
+_FloatUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
+_IntUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
+_LongUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
+_ShortUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
 
 
-def access_factory_for(dtype, owning):
-    return unsafe_owning_for_dtype[dtype] if owning else unsafe_for_dtype[dtype]
+def _access_factory_for(dtype, owning):
+    return _unsafe_owning_for_dtype[dtype] if owning else _unsafe_for_dtype[dtype]
 
 
-unsafe_for_dtype = {
-    np.dtype('complex64')  : FloatUnsafe,
-    np.dtype('complex128') : DoubleUnsafe,
-    np.dtype('float32')    : FloatUnsafe,
-    np.dtype('float64')    : DoubleUnsafe,
-    np.dtype('int8')       : ByteUnsafe,
-    np.dtype('int16')      : ShortUnsafe,
-    np.dtype('int32')      : IntUnsafe,
-    np.dtype('int64')      : LongUnsafe,
-    np.dtype('uint8')      : ByteUnsafe,
-    np.dtype('uint16')     : ShortUnsafe,
-    np.dtype('uint32')     : IntUnsafe,
-    np.dtype('uint64')     : LongUnsafe
+_unsafe_for_dtype = {
+    np.dtype('complex64')  : _FloatUnsafe,
+    np.dtype('complex128') : _DoubleUnsafe,
+    np.dtype('float32')    : _FloatUnsafe,
+    np.dtype('float64')    : _DoubleUnsafe,
+    np.dtype('int8')       : _ByteUnsafe,
+    np.dtype('int16')      : _ShortUnsafe,
+    np.dtype('int32')      : _IntUnsafe,
+    np.dtype('int64')      : _LongUnsafe,
+    np.dtype('uint8')      : _ByteUnsafe,
+    np.dtype('uint16')     : _ShortUnsafe,
+    np.dtype('uint32')     : _IntUnsafe,
+    np.dtype('uint64')     : _LongUnsafe
 }
 
 # owning
-OwningByteUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningByteUnsafe')
-OwningCharUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningCharUnsafe')
-OwningDoubleUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningDoubleUnsafe')
-OwningFloatUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
-OwningIntUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningIntUnsafe')
-OwningLongUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningLongUnsafe')
-OwningShortUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningShortUnsafe')
+_OwningByteUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningByteUnsafe')
+_OwningCharUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningCharUnsafe')
+_OwningDoubleUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningDoubleUnsafe')
+_OwningFloatUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
+_OwningIntUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningIntUnsafe')
+_OwningLongUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningLongUnsafe')
+_OwningShortUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningShortUnsafe')
 
-unsafe_owning_for_dtype = {
-    np.dtype('complex64')  : lambda size: OwningFloatUnsafe(2 * size),
-    np.dtype('complex128') : lambda size: OwningDoubleUnsafe(2 * size),
-    np.dtype('float32')    : OwningFloatUnsafe,
-    np.dtype('float64')    : OwningDoubleUnsafe,
-    np.dtype('int8')       : OwningByteUnsafe,
-    np.dtype('int16')      : OwningShortUnsafe,
-    np.dtype('int32')      : OwningIntUnsafe,
-    np.dtype('int64')      : OwningLongUnsafe,
-    np.dtype('uint8')      : OwningByteUnsafe,
-    np.dtype('uint16')     : OwningShortUnsafe,
-    np.dtype('uint32')     : OwningIntUnsafe,
-    np.dtype('uint64')     : OwningLongUnsafe
+_unsafe_owning_for_dtype = {
+    np.dtype('complex64')  : lambda size: _OwningFloatUnsafe(2 * size),
+    np.dtype('complex128') : lambda size: _OwningDoubleUnsafe(2 * size),
+    np.dtype('float32')    : _OwningFloatUnsafe,
+    np.dtype('float64')    : _OwningDoubleUnsafe,
+    np.dtype('int8')       : _OwningByteUnsafe,
+    np.dtype('int16')      : _OwningShortUnsafe,
+    np.dtype('int32')      : _OwningIntUnsafe,
+    np.dtype('int64')      : _OwningLongUnsafe,
+    np.dtype('uint8')      : _OwningByteUnsafe,
+    np.dtype('uint16')     : _OwningShortUnsafe,
+    np.dtype('uint32')     : _OwningIntUnsafe,
+    np.dtype('uint64')     : _OwningLongUnsafe
 }
