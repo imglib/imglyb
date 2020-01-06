@@ -2,15 +2,20 @@ import threading
 
 from . import accesses
 from . import types
-from .util import to_imglib
-from jnius import JavaException, autoclass, PythonJavaClass, java_method, cast
+from .reference_store import ReferenceStore
+from .types import for_np_dtype
+from .util import RunnableFromFunc, _get_address
+from jnius import JavaException, autoclass, PythonJavaClass, java_method
 
 import math
 import numpy as np
 
+
+Accesses = autoclass('tmp.net.imglib2.img.basictypeaccess.Accesses')
 PythonHelpers = autoclass('net.imglib2.python.Helpers')
 
-_global_set = set()
+_global_reference_store = ReferenceStore()
+
 
 def identity(x):
     return x
@@ -52,42 +57,52 @@ def chunk_index_to_slices(shape, chunk_shape, cell_index):
 
     return slices
 
-_get_chunk_lock = threading.RLock()
+
 def get_chunk(array, chunk_shape, chunk_index, chunk_as_array):
-    with _get_chunk_lock:
-        slices = chunk_index_to_slices(array.shape, chunk_shape, chunk_index)
-        sliced = array[slices]
-        array  = chunk_as_array(sliced)
-        return np.ascontiguousarray(array)
+    slices = chunk_index_to_slices(array.shape, chunk_shape, chunk_index)
+    sliced = array[slices]
+    array = chunk_as_array(sliced)
+    return np.ascontiguousarray(array)
 
 
-_get_chunk_access_lock = threading.RLock()
-def get_chunk_access(array, chunk_shape, index, chunk_as_array, use_volatile_access=True):
+def get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volatile_access=True):
+    try:
+        chunk = get_chunk(array, chunk_shape, index, chunk_as_array)
+        dtype = for_np_dtype(chunk.dtype, volatile=False)
+        ptype = dtype.getNativeTypeFactory().getPrimitiveType()
+        # TODO check ratio for integral value first?
+        ratio = int(dtype.getEntitiesPerPixel().getRatio())
+        return Accesses.asArrayAccess(
+            _get_address(chunk),
+            chunk.size * ratio,
+            use_volatile_access,
+            ptype)
 
-    with _get_chunk_access_lock:
-        try:
-            chunk = get_chunk(array, chunk_shape, index, chunk_as_array)
-            # img   = to_imglib(chunk)
-            # return cast('net.imglib2.img.array.ArrayImg', img.getSource()).update(None)
-            target = accesses.as_array_access(chunk, volatile=use_volatile_access)
-            return target
-
-        except JavaException as e:
-            print("exception    ", e)
-            print("cause        ", e.__cause__)
-            print("inner message", e.innermessage)
-            if e.stacktrace:
-                for line in e.stacktrace:
-                    print(line)
-            raise e
+    except JavaException as e:
+        print("exception    ", e)
+        print("cause        ", e.__cause__)
+        print("inner message", e.innermessage)
+        if e.stacktrace:
+            for line in e.stacktrace:
+                print(line)
+        raise e
 
 
-def get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array):
+def get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, reference_store):
 
     try:
-        chunk  = get_chunk(array, chunk_shape, index, chunk_as_array)
-        img    = to_imglib(chunk)
-        return cast('net.imglib2.img.array.ArrayImg', img.getSource()).update(None)
+        chunk = np.ascontiguousarray(get_chunk(array, chunk_shape, index, chunk_as_array))
+        address = _get_address(chunk)
+        ref_id = reference_store.get_next_id()
+
+        def lol_remove():
+            print("REMOVING!")
+            reference_store.remove_reference(ref_id)
+        owner = RunnableFromFunc(lol_remove)
+        reference_store.add_reference(ref_id, (chunk, owner))
+        access = access_factory_for(chunk.dtype, owning=False)(address, owner)
+        # print('added!', reference_store.number_of_stored_references())
+        return access
 
     except JavaException as e:
         print("exception    ", e)
@@ -113,38 +128,10 @@ def as_cell_img(array, chunk_shape, *, access_type='native', chunk_as_array=iden
 
 # TODO is it bad style to use **kwargs to ignore unexpected kwargs?
 def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, *, use_volatile_access=True, **kwargs):
-    # Does not work:
-    # def make_my_get_chunk():
-    #     def my_get_chunk(array, chunk_shape, chunk_index, chunk_as_array):
-    #         slices = chunk_index_to_slices(array.shape, chunk_shape, chunk_index)
-    #         sliced = array[slices]
-    #         array  = chunk_as_array(sliced)
-    #         return np.ascontiguousarray(array)
-    #     return my_get_chunk
-    #
-    # def make_my_get_chunk_access():
-    #     def my_get_chunk_access(array, chunk_shape, index, chunk_as_array, use_volatile_access=True):
-    #
-    #         try:
-    #             chunk = make_my_get_chunk()(array, chunk_shape, index, chunk_as_array)
-    #             # img   = to_imglib(chunk)
-    #             # return cast('net.imglib2.img.array.ArrayImg', img.getSource()).update(None)
-    #             target = accesses.as_array_access(chunk, volatile=use_volatile_access)
-    #             return target
-    #
-    #         except JavaException as e:
-    #             print("exception    ", e)
-    #             print("cause        ", e.__cause__)
-    #             print("inner message", e.innermessage)
-    #             if e.stacktrace:
-    #                 for line in e.stacktrace:
-    #                     print(line)
-    #             raise e
-    #     return my_get_chunk_access
-
     access_generator = MakeAccessFunction(
-        lambda index: get_chunk_access(array, chunk_shape, index, chunk_as_array, use_volatile_access=use_volatile_access))
-    _global_set.add(access_generator)
+        lambda index: get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volatile_access=use_volatile_access))
+    reference_store = ReferenceStore()
+    reference_store.add_reference_with_new_id(access_generator)
 
     shape = array.shape[::-1]
     chunk_shape = chunk_shape[::-1]
@@ -159,15 +146,16 @@ def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, *, use_v
             get_chunk(array, chunk_shape, 0, chunk_as_array=chunk_as_array),
             volatile=use_volatile_access))
 
-    return img
+    return img, reference_store
 
 
 # TODO is it bad style to use **kwargs to ignore unexpected kwargs?
 def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, **kwargs):
 
+    reference_store = ReferenceStore()
     access_generator = MakeAccessFunction(
-        lambda index: get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array))
-    _global_set.add(access_generator)
+        lambda index: get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, reference_store))
+    reference_store.add_reference_with_new_id(access_generator)
 
     shape = array.shape[::-1]
     chunk_shape = chunk_shape[::-1]
@@ -178,7 +166,7 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, **kwarg
             chunk_shape,
             access_generator,
             types.for_np_dtype(array.dtype, volatile=False),
-            access_factory_for(array.dtype, owning=False)(1))
+            access_factory_for(array.dtype, owning=False)(1, None))
 
     except JavaException as e:
         print("exception    ", e)
@@ -190,7 +178,7 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, **kwarg
                 print(line)
         raise e
 
-    return img
+    return img, reference_store
 
 # non-owning
 ByteUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
@@ -201,12 +189,14 @@ IntUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
 LongUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
 ShortUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
 
+
 def access_factory_for(dtype, owning):
     return unsafe_owning_for_dtype[dtype] if owning else unsafe_for_dtype[dtype]
 
+
 unsafe_for_dtype = {
-    np.dtype('complex64')  : lambda size: FloatUnsafe(2 * size),
-    np.dtype('complex128') : lambda size: DoubleUnsafe(2 * size),
+    np.dtype('complex64')  : FloatUnsafe,
+    np.dtype('complex128') : DoubleUnsafe,
     np.dtype('float32')    : FloatUnsafe,
     np.dtype('float64')    : DoubleUnsafe,
     np.dtype('int8')       : ByteUnsafe,

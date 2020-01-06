@@ -12,17 +12,13 @@ from jnius import autoclass, cast, JavaException
 
 path = '/home/hanslovskyp/Downloads/sample_A_20160501.hdf'
 
-global_store = []
-global_store_lock = threading.RLock()
 
-def store_also(x):
-    with global_store_lock:
-        global_store.append(x)
-        print(len(global_store))
+def compute(x):
+    return x.compute()
+
+
+def identity(x):
     return x
-
-def compute_and_store_also(x):
-    return store_also(x.compute())
 
 
 BdvFunctions        = imglyb.util.BdvFunctions
@@ -36,8 +32,8 @@ ds         = file['volumes/raw']
 data       = da.from_array(ds, chunks=block_size)
 sigma      = (0.1, 1.0, 1.0)
 smoothed   = ndfilters.gaussian_filter(data, sigma=sigma)
-img1       = imglyb.as_cell_img(ds,       block_size, access_type='array', chunk_as_array=store_also)
-img2       = imglyb.as_cell_img(smoothed, block_size, access_type='array', chunk_as_array=compute_and_store_also)
+img1, s1   = imglyb.as_cell_img(ds,       block_size, access_type='array', chunk_as_array=identity)
+img2, s2   = imglyb.as_cell_img(smoothed, block_size, access_type='native', chunk_as_array=compute)
 try:
     vimg1  = VolatileViews.wrapAsVolatile(img1)
     vimg2  = VolatileViews.wrapAsVolatile(img2)
@@ -52,6 +48,7 @@ except JavaException as e:
 bdv = BdvFunctions.show(vimg1, 'raw')
 BdvFunctions.show(vimg2, 'smoothed', BdvOptions.options().addTo(bdv))
 
+System = autoclass('java.lang.System')
 
 def runUntilBdvDoesNotShow():
     # while True:
@@ -59,6 +56,10 @@ def runUntilBdvDoesNotShow():
     panel = bdv.getBdvHandle().getViewerPanel()
     while panel.isShowing():
         time.sleep(0.3)
+        img1.getCache().invalidateAll()
+        img2.getCache().invalidateAll()
+        System.gc()
+    print(s1, s2)
 
 
 threading.Thread(target=runUntilBdvDoesNotShow).start()
