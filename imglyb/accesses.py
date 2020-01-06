@@ -1,11 +1,8 @@
 import numpy as np
 
-import imglyb
 from jnius import autoclass
 
-import time
-
-Accesses            = autoclass('tmp.net.imglib2.img.basictypeaccess.Accesses')
+Accesses            = autoclass('net.imglib2.img.basictypeaccess.Accesses')
 
 ByteArray           = autoclass('net.imglib2.img.basictypeaccess.array.ByteArray')
 CharArray           = autoclass('net.imglib2.img.basictypeaccess.array.CharArray')

@@ -10,7 +10,6 @@ from .types import for_np_dtype
 from .util import RunnableFromFunc, _get_address
 from jnius import JavaException, autoclass, PythonJavaClass, java_method
 
-Accesses = autoclass('tmp.net.imglib2.img.basictypeaccess.Accesses')
 PythonHelpers = autoclass('net.imglib2.python.Helpers')
 
 _global_reference_store = ReferenceStore()
@@ -73,7 +72,7 @@ def get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volati
         ptype = dtype.getNativeTypeFactory().getPrimitiveType()
         # TODO check ratio for integral value first?
         ratio = int(dtype.getEntitiesPerPixel().getRatio())
-        return Accesses.asArrayAccess(
+        return accesses.Accesses.asArrayAccess(
             _get_address(chunk),
             chunk.size * ratio,
             use_volatile_access,
