@@ -10,7 +10,7 @@ Views = imglyb.util.Views
 shape      = (3, 5)
 data       = np.arange(np.prod(shape)).reshape(shape)
 block_size = (2, 2)
-img        = imglyb.as_cell_img(data, block_size, access_type='array')
+img, _     = imglyb.as_cell_img(data, block_size, access_type='native', cache=1)
 
 print(data)
 print(img.toString())

@@ -18,7 +18,7 @@ VolatileViews       = autoclass('bdv.util.volatiles.VolatileViews')
 file       = h5py.File(path, 'r')
 ds         = file['volumes/raw']
 block_size = (32,) * 3
-img        = imglyb.as_cell_img(ds, block_size, access_type='array')
+img, _     = imglyb.as_cell_img(ds, block_size, access_type='array', cache=10000)
 try:
     vimg   = VolatileViews.wrapAsVolatile(img)
 except JavaException as e:
@@ -33,11 +33,8 @@ bdv = BdvFunctions.show(vimg, 'raw')
 
 def runUntilBdvDoesNotShow():
     panel = bdv.getBdvHandle().getViewerPanel()
-    idx = 0
     while panel.isShowing():
-        print(np.mean(ds[idx:idx+block_size[0], :block_size[1], :block_size[2]]))
         time.sleep(0.3)
-        idx = (idx + 1) % 5
 
 
 threading.Thread(target=runUntilBdvDoesNotShow).start()
