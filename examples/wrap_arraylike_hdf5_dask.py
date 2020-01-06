@@ -5,6 +5,9 @@ import scyjava_config
 import threading
 import time
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 scyjava_config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
 
 import imglyb
@@ -32,8 +35,8 @@ ds         = file['volumes/raw']
 data       = da.from_array(ds, chunks=block_size)
 sigma      = (0.1, 1.0, 1.0)
 smoothed   = ndfilters.gaussian_filter(data, sigma=sigma)
-img1, s1   = imglyb.as_cell_img(ds,       block_size, access_type='array', chunk_as_array=identity)
-img2, s2   = imglyb.as_cell_img(smoothed, block_size, access_type='native', chunk_as_array=compute)
+img1, s1   = imglyb.as_cell_img(ds,       block_size, cache=100, access_type='native', chunk_as_array=identity)
+img2, s2   = imglyb.as_cell_img(smoothed, block_size, cache=100, access_type='native', chunk_as_array=compute)
 try:
     vimg1  = VolatileViews.wrapAsVolatile(img1)
     vimg2  = VolatileViews.wrapAsVolatile(img2)
@@ -51,15 +54,10 @@ BdvFunctions.show(vimg2, 'smoothed', BdvOptions.options().addTo(bdv))
 System = autoclass('java.lang.System')
 
 def runUntilBdvDoesNotShow():
-    # while True:
-    #     time.sleep(0.3)
     panel = bdv.getBdvHandle().getViewerPanel()
     while panel.isShowing():
         time.sleep(0.3)
-        img1.getCache().invalidateAll()
-        img2.getCache().invalidateAll()
-        System.gc()
-    print(s1, s2)
+        # System.gc()
 
 
 threading.Thread(target=runUntilBdvDoesNotShow).start()

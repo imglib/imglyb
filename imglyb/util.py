@@ -1,14 +1,11 @@
 from __future__ import division
 
-import ctypes
-
-from collections import defaultdict
+import logging
+import numpy as np
 
 from jnius import autoclass, PythonJavaClass, java_method
 
-import numpy as np
-
-import sys
+_logger = logging.getLogger(__name__)
 
 __all__ = (
     'to_imglib',
@@ -154,5 +151,5 @@ class RunnableFromFunc(PythonJavaClass):
 
     @java_method('()V')
     def run(self):
-        print('RUNNING IT NOW!')
+        _logger.debug('Running function %s', self.func)
         self.func()

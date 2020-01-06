@@ -1,20 +1,21 @@
-import threading
+import logging
+import math
+import numpy as np
 
 from . import accesses
 from . import types
+from .caches import BoundedSoftRefLoaderCache
 from .reference_store import ReferenceStore
 from .types import for_np_dtype
 from .util import RunnableFromFunc, _get_address
 from jnius import JavaException, autoclass, PythonJavaClass, java_method
 
-import math
-import numpy as np
-
-
 Accesses = autoclass('tmp.net.imglib2.img.basictypeaccess.Accesses')
 PythonHelpers = autoclass('net.imglib2.python.Helpers')
 
 _global_reference_store = ReferenceStore()
+
+_logger = logging.getLogger(__name__)
 
 
 def identity(x):
@@ -95,13 +96,12 @@ def get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, reference
         address = _get_address(chunk)
         ref_id = reference_store.get_next_id()
 
-        def lol_remove():
-            print("REMOVING!")
+        def remove_reference():
+            _logger.debug('Removing ref id %d', ref_id)
             reference_store.remove_reference(ref_id)
-        owner = RunnableFromFunc(lol_remove)
+        owner = RunnableFromFunc(remove_reference)
         reference_store.add_reference(ref_id, (chunk, owner))
         access = access_factory_for(chunk.dtype, owning=False)(address, owner)
-        # print('added!', reference_store.number_of_stored_references())
         return access
 
     except JavaException as e:
@@ -114,7 +114,7 @@ def get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, reference
         raise e
 
 
-def as_cell_img(array, chunk_shape, *, access_type='native', chunk_as_array=identity, **kwargs):
+def as_cell_img(array, chunk_shape, cache, *, access_type='native', chunk_as_array=identity, **kwargs):
     access_type_function_mapping = {
         'array':  as_cell_img_with_array_accesses,
         'native': as_cell_img_with_native_accesses
@@ -123,11 +123,13 @@ def as_cell_img(array, chunk_shape, *, access_type='native', chunk_as_array=iden
     if access_type not in access_type_function_mapping:
         raise Exception(f'Invalid access type: `{access_type}\'. Choose one of {access_type_function_mapping.keys()}')
 
-    return access_type_function_mapping[access_type](array, chunk_shape, chunk_as_array, **kwargs)
+    cache = BoundedSoftRefLoaderCache(cache) if isinstance(cache, int) else cache
+
+    return access_type_function_mapping[access_type](array, chunk_shape, chunk_as_array, cache, **kwargs)
 
 
 # TODO is it bad style to use **kwargs to ignore unexpected kwargs?
-def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, *, use_volatile_access=True, **kwargs):
+def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, cache, *, use_volatile_access=True, **kwargs):
     access_generator = MakeAccessFunction(
         lambda index: get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volatile_access=use_volatile_access))
     reference_store = ReferenceStore()
@@ -144,13 +146,14 @@ def as_cell_img_with_array_accesses(array, chunk_shape, chunk_as_array, *, use_v
         # TODO do not load first block here, just create a length-one access
         accesses.as_array_access(
             get_chunk(array, chunk_shape, 0, chunk_as_array=chunk_as_array),
-            volatile=use_volatile_access))
+            volatile=use_volatile_access),
+        cache)
 
     return img, reference_store
 
 
 # TODO is it bad style to use **kwargs to ignore unexpected kwargs?
-def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, **kwargs):
+def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, cache, **kwargs):
 
     reference_store = ReferenceStore()
     access_generator = MakeAccessFunction(
@@ -166,7 +169,8 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, **kwarg
             chunk_shape,
             access_generator,
             types.for_np_dtype(array.dtype, volatile=False),
-            access_factory_for(array.dtype, owning=False)(1, None))
+            access_factory_for(array.dtype, owning=False)(1, None),
+            cache)
 
     except JavaException as e:
         print("exception    ", e)
