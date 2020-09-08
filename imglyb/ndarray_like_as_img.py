@@ -1,6 +1,8 @@
 import logging
 import math
 import numpy as np
+import jpype
+import jpype.imports
 
 from . import accesses
 from . import types
@@ -8,9 +10,8 @@ from .caches import BoundedSoftRefLoaderCache
 from .reference_store import ReferenceStore
 from .types import for_np_dtype
 from .util import RunnableFromFunc, _get_address
-from jnius import JavaException, autoclass, PythonJavaClass, java_method
 
-PythonHelpers = autoclass('net.imglib2.python.Helpers')
+PythonHelpers = jpype.JClass('net.imglib2.python.Helpers')
 
 _global_reference_store = ReferenceStore()
 
@@ -210,13 +211,13 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, cache, 
     return img, reference_store
 
 # non-owning
-_ByteUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
-_CharUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
-_DoubleUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
-_FloatUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
-_IntUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
-_LongUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
-_ShortUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
+_ByteUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
+_CharUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
+_DoubleUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
+_FloatUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
+_IntUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
+_LongUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
+_ShortUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
 
 
 def _access_factory_for(dtype, owning):
@@ -239,13 +240,13 @@ _unsafe_for_dtype = {
 }
 
 # owning
-_OwningByteUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningByteUnsafe')
-_OwningCharUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningCharUnsafe')
-_OwningDoubleUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningDoubleUnsafe')
-_OwningFloatUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
-_OwningIntUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningIntUnsafe')
-_OwningLongUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningLongUnsafe')
-_OwningShortUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningShortUnsafe')
+_OwningByteUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningByteUnsafe')
+_OwningCharUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningCharUnsafe')
+_OwningDoubleUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningDoubleUnsafe')
+_OwningFloatUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
+_OwningIntUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningIntUnsafe')
+_OwningLongUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningLongUnsafe')
+_OwningShortUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningShortUnsafe')
 
 _unsafe_owning_for_dtype = {
     np.dtype('complex64')  : lambda size: _OwningFloatUnsafe(2 * size),

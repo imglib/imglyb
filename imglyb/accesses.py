@@ -1,32 +1,32 @@
 import numpy as np
+import jpype
+import jpype.imports
 
-from jnius import autoclass
+Accesses            = jpype.JClass('net.imglib2.img.basictypeaccess.Accesses')
 
-Accesses            = autoclass('net.imglib2.img.basictypeaccess.Accesses')
+ByteArray           = jpype.JClass('net.imglib2.img.basictypeaccess.array.ByteArray')
+CharArray           = jpype.JClass('net.imglib2.img.basictypeaccess.array.CharArray')
+DoubleArray         = jpype.JClass('net.imglib2.img.basictypeaccess.array.DoubleArray')
+FloatArray          = jpype.JClass('net.imglib2.img.basictypeaccess.array.FloatArray')
+IntArray            = jpype.JClass('net.imglib2.img.basictypeaccess.array.IntArray')
+LongArray           = jpype.JClass('net.imglib2.img.basictypeaccess.array.LongArray')
+ShortArray          = jpype.JClass('net.imglib2.img.basictypeaccess.array.ShortArray')
 
-ByteArray           = autoclass('net.imglib2.img.basictypeaccess.array.ByteArray')
-CharArray           = autoclass('net.imglib2.img.basictypeaccess.array.CharArray')
-DoubleArray         = autoclass('net.imglib2.img.basictypeaccess.array.DoubleArray')
-FloatArray          = autoclass('net.imglib2.img.basictypeaccess.array.FloatArray')
-IntArray            = autoclass('net.imglib2.img.basictypeaccess.array.IntArray')
-LongArray           = autoclass('net.imglib2.img.basictypeaccess.array.LongArray')
-ShortArray          = autoclass('net.imglib2.img.basictypeaccess.array.ShortArray')
+VolatileByteArray   = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileByteArray')
+VolatileCharArray   = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileCharArray')
+VolatileDoubleArray = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileDoubleArray')
+VolatileFloatArray  = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileFloatArray')
+VolatileIntArray    = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileIntArray')
+VolatileLongArray   = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileLongArray')
+VolatileShortArray  = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileShortArray')
 
-VolatileByteArray   = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileByteArray')
-VolatileCharArray   = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileCharArray')
-VolatileDoubleArray = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileDoubleArray')
-VolatileFloatArray  = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileFloatArray')
-VolatileIntArray    = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileIntArray')
-VolatileLongArray   = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileLongArray')
-VolatileShortArray  = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileShortArray')
-
-ByteUnsafe          = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
-CharUnsafe          = autoclass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
-DoubleUnsafe        = autoclass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
-FloatUnsafe         = autoclass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
-IntUnsafe           = autoclass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
-LongUnsafe          = autoclass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
-ShortUnsafe         = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
+ByteUnsafe          = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
+CharUnsafe          = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
+DoubleUnsafe        = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
+FloatUnsafe         = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
+IntUnsafe           = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
+LongUnsafe          = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
+ShortUnsafe         = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
 
 
 # does not work with strided accesses, currently

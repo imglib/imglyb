@@ -1,31 +1,32 @@
 import numpy as np
 
 import imglyb
-from jnius import autoclass, MetaJavaClass
+import jpype
+import jpype.imports
 
-NativeType = autoclass('net.imglib2.type.NativeType')
+NativeType = jpype.JClass('net.imglib2.type.NativeType')
 
-FloatType                 = autoclass('net.imglib2.type.numeric.real.FloatType')
-DoubleType                = autoclass('net.imglib2.type.numeric.real.DoubleType')
-ByteType                  = autoclass('net.imglib2.type.numeric.integer.ByteType')
-UnsignedByteType          = autoclass('net.imglib2.type.numeric.integer.UnsignedByteType')
-ShortType                 = autoclass('net.imglib2.type.numeric.integer.ShortType')
-UnsignedShortType         = autoclass('net.imglib2.type.numeric.integer.UnsignedShortType')
-IntType                   = autoclass('net.imglib2.type.numeric.integer.IntType')
-UnsignedIntType           = autoclass('net.imglib2.type.numeric.integer.UnsignedIntType')
-LongType                  = autoclass('net.imglib2.type.numeric.integer.LongType')
-UnsignedLongType          = autoclass('net.imglib2.type.numeric.integer.UnsignedLongType')
+FloatType                 = jpype.JClass('net.imglib2.type.numeric.real.FloatType')
+DoubleType                = jpype.JClass('net.imglib2.type.numeric.real.DoubleType')
+ByteType                  = jpype.JClass('net.imglib2.type.numeric.integer.ByteType')
+UnsignedByteType          = jpype.JClass('net.imglib2.type.numeric.integer.UnsignedByteType')
+ShortType                 = jpype.JClass('net.imglib2.type.numeric.integer.ShortType')
+UnsignedShortType         = jpype.JClass('net.imglib2.type.numeric.integer.UnsignedShortType')
+IntType                   = jpype.JClass('net.imglib2.type.numeric.integer.IntType')
+UnsignedIntType           = jpype.JClass('net.imglib2.type.numeric.integer.UnsignedIntType')
+LongType                  = jpype.JClass('net.imglib2.type.numeric.integer.LongType')
+UnsignedLongType          = jpype.JClass('net.imglib2.type.numeric.integer.UnsignedLongType')
 
-VolatileFloatType         = autoclass('net.imglib2.type.volatiles.VolatileFloatType')
-VolatileDoubleType        = autoclass('net.imglib2.type.volatiles.VolatileDoubleType')
-VolatileByteType          = autoclass('net.imglib2.type.volatiles.VolatileByteType')
-VolatileUnsignedByteType  = autoclass('net.imglib2.type.volatiles.VolatileUnsignedByteType')
-VolatileShortType         = autoclass('net.imglib2.type.volatiles.VolatileShortType')
-VolatileUnsignedShortType = autoclass('net.imglib2.type.volatiles.VolatileUnsignedShortType')
-VolatileIntType           = autoclass('net.imglib2.type.volatiles.VolatileIntType')
-VolatileUnsignedIntType   = autoclass('net.imglib2.type.volatiles.VolatileUnsignedIntType')
-VolatileLongType          = autoclass('net.imglib2.type.volatiles.VolatileLongType')
-VolatileUnsignedLongType  = autoclass('net.imglib2.type.volatiles.VolatileUnsignedLongType')
+VolatileFloatType         = jpype.JClass('net.imglib2.type.volatiles.VolatileFloatType')
+VolatileDoubleType        = jpype.JClass('net.imglib2.type.volatiles.VolatileDoubleType')
+VolatileByteType          = jpype.JClass('net.imglib2.type.volatiles.VolatileByteType')
+VolatileUnsignedByteType  = jpype.JClass('net.imglib2.type.volatiles.VolatileUnsignedByteType')
+VolatileShortType         = jpype.JClass('net.imglib2.type.volatiles.VolatileShortType')
+VolatileUnsignedShortType = jpype.JClass('net.imglib2.type.volatiles.VolatileUnsignedShortType')
+VolatileIntType           = jpype.JClass('net.imglib2.type.volatiles.VolatileIntType')
+VolatileUnsignedIntType   = jpype.JClass('net.imglib2.type.volatiles.VolatileUnsignedIntType')
+VolatileLongType          = jpype.JClass('net.imglib2.type.volatiles.VolatileLongType')
+VolatileUnsignedLongType  = jpype.JClass('net.imglib2.type.volatiles.VolatileUnsignedLongType')
 
 
 def for_np_dtype(dtype, volatile=False):

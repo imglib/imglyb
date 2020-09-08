@@ -2,8 +2,8 @@ from __future__ import division
 
 import logging
 import numpy as np
-
-from jnius import autoclass, PythonJavaClass, java_method
+import jpype
+import jpype.imports
 
 _logger = logging.getLogger(__name__)
 
@@ -15,20 +15,20 @@ __all__ = (
 )
 
 # java
-Random = autoclass('java.util.Random')
+Random = jpype.JClass('java.util.Random')
 
 # imglib
-Helpers                            = autoclass('net.imglib2.python.Helpers')
-NumpyToImgLibConversions           = autoclass('net.imglib2.python.NumpyToImgLibConversions')
-NumpyToImgLibConversionsWithStride = autoclass('net.imglib2.python.NumpyToImgLibConversionsWithStride')
-Views                              = autoclass('net.imglib2.view.Views')
+Helpers                            = jpype.JClass('net.imglib2.python.Helpers')
+NumpyToImgLibConversions           = jpype.JClass('net.imglib2.python.NumpyToImgLibConversions')
+NumpyToImgLibConversionsWithStride = jpype.JClass('net.imglib2.python.NumpyToImgLibConversionsWithStride')
+Views                              = jpype.JClass('net.imglib2.view.Views')
 
 # bigdataviewer
-BdvFunctions = autoclass('bdv.util.BdvFunctions')
-BdvOptions   = autoclass('bdv.util.BdvOptions')
+BdvFunctions = jpype.JClass('bdv.util.BdvFunctions')
+BdvOptions   = jpype.JClass('bdv.util.BdvOptions')
 
 # Guard
-ReferenceGuardingRandomAccessibleInterval = autoclass('net/imglib2/python/ReferenceGuardingRandomAccessibleInterval')
+ReferenceGuardingRandomAccessibleInterval = jpype.JClass('net/imglib2/python/ReferenceGuardingRandomAccessibleInterval')
 
 numpy_dtype_to_conversion_method = {
     np.dtype('complex64')  : NumpyToImgLibConversions.toComplexFloat,

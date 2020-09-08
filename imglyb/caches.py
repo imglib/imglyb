@@ -1,4 +1,5 @@
-from jnius import autoclass
+import jpype
+import jpype.imports
 
 __all__ = (
     'BoundedSoftRefLoaderCache',
@@ -7,7 +8,7 @@ __all__ = (
     'WeakRefLoaderCache'
 )
 
-BoundedSoftRefLoaderCache   = autoclass('net.imglib2.cache.ref.BoundedSoftRefLoaderCache')
-GuardedStrongRefLoaderCache = autoclass('net.imglib2.cache.ref.GuardedStrongRefLoaderCache')
-SoftRefLoaderCache          = autoclass('net.imglib2.cache.ref.SoftRefLoaderCache')
-WeakRefLoaderCache          = autoclass('net.imglib2.cache.ref.WeakRefLoaderCache')
+BoundedSoftRefLoaderCache   = jpype.JClass('net.imglib2.cache.ref.BoundedSoftRefLoaderCache')
+GuardedStrongRefLoaderCache = jpype.JClass('net.imglib2.cache.ref.GuardedStrongRefLoaderCache')
+SoftRefLoaderCache          = jpype.JClass('net.imglib2.cache.ref.SoftRefLoaderCache')
+WeakRefLoaderCache          = jpype.JClass('net.imglib2.cache.ref.WeakRefLoaderCache')

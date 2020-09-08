@@ -1,10 +1,11 @@
 from imglyb import util
-from jnius import autoclass, cast
 
 import ctypes
 import numpy as np
+import jpype
+import jpype.imports
 
-Intervals = autoclass('net.imglib2.util.Intervals')
+Intervals = jpype.JClass('net.imglib2.util.Intervals')
 
 dtype_selector = {
     'FloatType': np.dtype('float32'),
@@ -74,12 +75,12 @@ class ImgLibReferenceGuard(np.ndarray):
 
 if __name__ == "__main__":
 
-    ArrayImgs = autoclass('net.imglib2.img.array.ArrayImgs')
-    UnsafeUtil = autoclass('net.imglib2.img.basictypelongaccess.unsafe.UnsafeUtil')
-    Arrays = autoclass('java.util.Arrays')
-    OwningFloatUnsafe = autoclass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
-    Fraction = autoclass('net.imglib2.util.Fraction')
-    LongStream = autoclass('java.util.stream.LongStream')
+    ArrayImgs = jpype.JClass('net.imglib2.img.array.ArrayImgs')
+    UnsafeUtil = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.UnsafeUtil')
+    Arrays = jpype.JClass('java.util.Arrays')
+    OwningFloatUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
+    Fraction = jpype.JClass('net.imglib2.util.Fraction')
+    LongStream = jpype.JClass('java.util.stream.LongStream')
 
     shape = (2, 3, 4)
     n_elements = int(np.prod(shape))
