@@ -13,9 +13,8 @@ def _init_jvm_options():
     import scyjava_config
 
     imglib2_imglyb_version = imglyb_config.get_imglib2_imglyb_version()
-    jvm_status = jpype.isJVMStarted()
 
-    if jvm_status:
+    if scyjava_config.jvm_status():
         _logger.warning('JVM is already running, will not add relevant endpoints to classpath -- '
                         'required classes might not be on classpath. '
                         'In case of failure, try importing imglyb before scyjava or jpype')
