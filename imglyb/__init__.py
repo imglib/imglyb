@@ -9,16 +9,16 @@ __all__ = ('to_imglib', 'to_imglib_argb', 'to_numpy')
 
 def _init_jvm_options():
     import imglyb_config
-    import jnius_config
+    import jpype
     import scyjava_config
 
     imglib2_imglyb_version = imglyb_config.get_imglib2_imglyb_version()
+    jvm_status = jpype.isJVMStarted()
 
-    if jnius_config.vm_running:
+    if jvm_status:
         _logger.warning('JVM is already running, will not add relevant endpoints to classpath -- '
                         'required classes might not be on classpath. '
-                        'In case of failure, try importing imglyb before scyjava or jnius')
-        return jnius_config
+                        'In case of failure, try importing imglyb before scyjava or jpype')
 
     IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib2:imglib2-imglyb:{}'.format(imglib2_imglyb_version)
     RELEVANT_MAVEN_REPOS    = {
@@ -32,7 +32,7 @@ def _init_jvm_options():
 
     import scyjava
 
-    return jnius_config
+    return 
 
 
 config = _init_jvm_options()
