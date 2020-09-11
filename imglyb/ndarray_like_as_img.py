@@ -1,9 +1,8 @@
 import logging
 import math
 import numpy as np
-import jpype
-import jpype.imports
 
+from jpype import JClass, JException, JImplements
 from . import accesses
 from . import types
 from .caches import BoundedSoftRefLoaderCache
@@ -11,7 +10,7 @@ from .reference_store import ReferenceStore
 from .types import for_np_dtype
 from .util import RunnableFromFunc, _get_address
 
-PythonHelpers = jpype.JClass('net.imglib2.python.Helpers')
+PythonHelpers = JClass('net.imglib2.python.Helpers')
 
 _global_reference_store = ReferenceStore()
 
@@ -24,19 +23,17 @@ def identity(x):
     """
     return x
 
-
+@JImplements('java.util.function.LongFunction')
 class MakeAccessFunction(PythonJavaClass):
     """
     Implements a java `LongFunction` that can be passed into `PythonHelpers.imgFromFunc` and
     `PythonHelpers.imgWithCellLoaderFromFunc`.
     """
-    __javainterfaces__ = ['java/util/function/LongFunction']
 
     def __init__(self, func):
         super(MakeAccessFunction, self).__init__()
         self.func = func
 
-    @java_method('(J)Ljava/lang/Object;')
     def apply(self, index):
         access = self.func(index)
         return access
@@ -86,7 +83,7 @@ def _get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volat
             use_volatile_access,
             ptype)
 
-    except JavaException as e:
+    except JException as e:
         print("exception    ", e)
         print("cause        ", e.__cause__)
         print("inner message", e.innermessage)
@@ -111,7 +108,7 @@ def _get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, referenc
         access = _access_factory_for(chunk.dtype, owning=False)(address, owner)
         return access
 
-    except JavaException as e:
+    except JException as e:
         print("exception    ", e)
         print("cause        ", e.__cause__)
         print("inner message", e.innermessage)
@@ -198,7 +195,7 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, cache, 
             _access_factory_for(array.dtype, owning=False)(1, None),
             cache)
 
-    except JavaException as e:
+    except JException as e:
         print("exception    ", e)
         print("cause        ", e.__cause__)
         print("inner message", e.innermessage)
@@ -211,13 +208,13 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, cache, 
     return img, reference_store
 
 # non-owning
-_ByteUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
-_CharUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
-_DoubleUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
-_FloatUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
-_IntUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
-_LongUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
-_ShortUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
+_ByteUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
+_CharUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
+_DoubleUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
+_FloatUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
+_IntUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
+_LongUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
+_ShortUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
 
 
 def _access_factory_for(dtype, owning):
@@ -240,13 +237,13 @@ _unsafe_for_dtype = {
 }
 
 # owning
-_OwningByteUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningByteUnsafe')
-_OwningCharUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningCharUnsafe')
-_OwningDoubleUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningDoubleUnsafe')
-_OwningFloatUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
-_OwningIntUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningIntUnsafe')
-_OwningLongUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningLongUnsafe')
-_OwningShortUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningShortUnsafe')
+_OwningByteUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningByteUnsafe')
+_OwningCharUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningCharUnsafe')
+_OwningDoubleUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningDoubleUnsafe')
+_OwningFloatUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
+_OwningIntUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningIntUnsafe')
+_OwningLongUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningLongUnsafe')
+_OwningShortUnsafe = JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningShortUnsafe')
 
 _unsafe_owning_for_dtype = {
     np.dtype('complex64')  : lambda size: _OwningFloatUnsafe(2 * size),

@@ -38,11 +38,11 @@ def get_address(rai):
     class_name = util.Helpers.classNameSimple(rai)
     class_name_full = util.Helpers.className(rai)
     if class_name in ('ArrayImg', 'UnsafeImg'):
-        access = cast(class_name_full, rai).update(None)
+        access = jpype.JObject(class_name_full, rai).update(None)
         access_type = util.Helpers.className(access)
 
         if 'basictypelongaccess.unsafe' in access_type:
-            return cast(access_type, access).getAddress()
+            return jpype.JObject(access_type, access).getAddress()
         else:
             raise ValueError("Excpected unsafe access but got {}".format(access_type))
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     data_store = OwningFloatUnsafe(n_elements)
     dim_array = LongStream.of(*shape).toArray()
     print(Arrays.toString(dim_array))
-    rai = util.Helpers.toArrayImg(cast(util.Helpers.className(data_store), data_store), dim_array)
+    rai = util.Helpers.toArrayImg(jpype.JObject(util.Helpers.className(data_store), data_store), dim_array)
     # rai = ArrayImgs.floats( *shape )
     c = rai.cursor()
     count = 23

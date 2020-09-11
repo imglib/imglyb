@@ -1,5 +1,4 @@
-import jpype
-import jpype.imports
+from jpype import JClass
 
 __all__ = (
     'BoundedSoftRefLoaderCache',
@@ -8,7 +7,7 @@ __all__ = (
     'WeakRefLoaderCache'
 )
 
-BoundedSoftRefLoaderCache   = jpype.JClass('net.imglib2.cache.ref.BoundedSoftRefLoaderCache')
-GuardedStrongRefLoaderCache = jpype.JClass('net.imglib2.cache.ref.GuardedStrongRefLoaderCache')
-SoftRefLoaderCache          = jpype.JClass('net.imglib2.cache.ref.SoftRefLoaderCache')
-WeakRefLoaderCache          = jpype.JClass('net.imglib2.cache.ref.WeakRefLoaderCache')
+BoundedSoftRefLoaderCache   = JClass('net.imglib2.cache.ref.BoundedSoftRefLoaderCache')
+GuardedStrongRefLoaderCache = JClass('net.imglib2.cache.ref.GuardedStrongRefLoaderCache')
+SoftRefLoaderCache          = JClass('net.imglib2.cache.ref.SoftRefLoaderCache')
+WeakRefLoaderCache          = JClass('net.imglib2.cache.ref.WeakRefLoaderCache')

@@ -2,8 +2,8 @@ from __future__ import division
 
 import logging
 import numpy as np
-import jpype
-import jpype.imports
+
+from jpype import JClass, JImplements
 
 _logger = logging.getLogger(__name__)
 
@@ -15,20 +15,20 @@ __all__ = (
 )
 
 # java
-Random = jpype.JClass('java.util.Random')
+Random = JClass('java.util.Random')
 
 # imglib
-Helpers                            = jpype.JClass('net.imglib2.python.Helpers')
-NumpyToImgLibConversions           = jpype.JClass('net.imglib2.python.NumpyToImgLibConversions')
-NumpyToImgLibConversionsWithStride = jpype.JClass('net.imglib2.python.NumpyToImgLibConversionsWithStride')
-Views                              = jpype.JClass('net.imglib2.view.Views')
+Helpers                            = JClass('net.imglib2.python.Helpers')
+NumpyToImgLibConversions           = JClass('net.imglib2.python.NumpyToImgLibConversions')
+NumpyToImgLibConversionsWithStride = JClass('net.imglib2.python.NumpyToImgLibConversionsWithStride')
+Views                              = JClass('net.imglib2.view.Views')
 
 # bigdataviewer
-BdvFunctions = jpype.JClass('bdv.util.BdvFunctions')
-BdvOptions   = jpype.JClass('bdv.util.BdvOptions')
+BdvFunctions = JClass('bdv.util.BdvFunctions')
+BdvOptions   = JClass('bdv.util.BdvOptions')
 
 # Guard
-ReferenceGuardingRandomAccessibleInterval = jpype.JClass('net/imglib2/python/ReferenceGuardingRandomAccessibleInterval')
+ReferenceGuardingRandomAccessibleInterval = JClass('net/imglib2/python/ReferenceGuardingRandomAccessibleInterval')
 
 numpy_dtype_to_conversion_method = {
     np.dtype('complex64')  : NumpyToImgLibConversions.toComplexFloat,
@@ -65,13 +65,12 @@ def _get_address(source):
     return source.ctypes.data
 
 
-class ReferenceGuard(PythonJavaClass):
-    __javainterfaces__ = ['net/imglib2/python/ReferenceGuardingRandomAccessibleInterval$ReferenceHolder']
+@JImplements('net.imglib2.python.ReferenceGuardingRandomAccessibleInterval$ReferenceHolder')
+class ReferenceGuard():
 
     def __init__(self, *args, **kwargs):
         super(ReferenceGuard, self).__init__()
         self.args = args
-
 
 # how to use type hints for python < 3.5?
 def to_imglib(source):
@@ -108,48 +107,42 @@ def _to_imglib_argb(source):
 def options2D():
     return BdvOptions.options().is2D()
 
-
-class GenericOverlayRenderer(PythonJavaClass):
-    __javainterfaces__ = ['net/imglib2/ui/OverlayRenderer']
-
+@JImplements('net.imglib2.ui.OverlayRenderer')
+class GenericOverlayRenderer():
+    
     def __init__(self, draw_overlays=lambda g: None, set_canvas_size=lambda w, h: None):
         super(GenericOverlayRenderer, self).__init__()
         self.draw_overlays = draw_overlays
         self.set_canvas_size = set_canvas_size
 
-    @java_method('(Ljava/awt/Graphics;)V')
     def drawOverlays(self, g):
         self.draw_overlays(g)
 
-    @java_method('(II)V')
     def setCanvasSize(self, width, height):
         self.set_canvas_size(width, height)
 
 
-class GenericMouseMotionListener(PythonJavaClass):
-    __javainterfaces__ = ['java/awt/event/MouseMotionListener']
+@JImplements('java.awt.event.MouseMotionListener')
+class GenericMouseMotionListener():
 
     def __init__(self, mouse_dragged=lambda e: None, mouse_moved=lambda e: None):
         super(GenericMouseMotionListener, self).__init__()
         self.mouse_dragged = mouse_dragged
         self.mouse_moved = mouse_moved
 
-    @java_method('(Ljava/awt/event/MouseEvent;)V')
     def mouseDragged(self, e):
         self.mouse_dragged(e)
 
-    @java_method('(Ljava/awt/event/MouseEvent;)V')
     def mouseMoved(self, e):
         self.mouse_moved(e)
 
-class RunnableFromFunc(PythonJavaClass):
-    __javainterfaces__ = ['java/lang/Runnable']
+@JImplements('java.lang.Runnable')
+class RunnableFromFunc():
 
     def __init__(self, func):
         super(RunnableFromFunc, self).__init__()
         self.func = func
 
-    @java_method('()V')
     def run(self):
         _logger.debug('Running function %s', self.func)
         self.func()

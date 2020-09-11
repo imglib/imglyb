@@ -1,32 +1,31 @@
 import numpy as np
-import jpype
-import jpype.imports
+from jpype import JClass
 
-Accesses            = jpype.JClass('net.imglib2.img.basictypeaccess.Accesses')
+Accesses            = JClass('net.imglib2.img.basictypeaccess.Accesses')
 
-ByteArray           = jpype.JClass('net.imglib2.img.basictypeaccess.array.ByteArray')
-CharArray           = jpype.JClass('net.imglib2.img.basictypeaccess.array.CharArray')
-DoubleArray         = jpype.JClass('net.imglib2.img.basictypeaccess.array.DoubleArray')
-FloatArray          = jpype.JClass('net.imglib2.img.basictypeaccess.array.FloatArray')
-IntArray            = jpype.JClass('net.imglib2.img.basictypeaccess.array.IntArray')
-LongArray           = jpype.JClass('net.imglib2.img.basictypeaccess.array.LongArray')
-ShortArray          = jpype.JClass('net.imglib2.img.basictypeaccess.array.ShortArray')
+ByteArray           = JClass('net.imglib2.img.basictypeaccess.array.ByteArray')
+CharArray           = JClass('net.imglib2.img.basictypeaccess.array.CharArray')
+DoubleArray         = JClass('net.imglib2.img.basictypeaccess.array.DoubleArray')
+FloatArray          = JClass('net.imglib2.img.basictypeaccess.array.FloatArray')
+IntArray            = JClass('net.imglib2.img.basictypeaccess.array.IntArray')
+LongArray           = JClass('net.imglib2.img.basictypeaccess.array.LongArray')
+ShortArray          = JClass('net.imglib2.img.basictypeaccess.array.ShortArray')
 
-VolatileByteArray   = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileByteArray')
-VolatileCharArray   = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileCharArray')
-VolatileDoubleArray = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileDoubleArray')
-VolatileFloatArray  = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileFloatArray')
-VolatileIntArray    = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileIntArray')
-VolatileLongArray   = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileLongArray')
-VolatileShortArray  = jpype.JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileShortArray')
+VolatileByteArray   = JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileByteArray')
+VolatileCharArray   = JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileCharArray')
+VolatileDoubleArray = JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileDoubleArray')
+VolatileFloatArray  = JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileFloatArray')
+VolatileIntArray    = JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileIntArray')
+VolatileLongArray   = JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileLongArray')
+VolatileShortArray  = JClass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileShortArray')
 
-ByteUnsafe          = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
-CharUnsafe          = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
-DoubleUnsafe        = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
-FloatUnsafe         = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
-IntUnsafe           = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
-LongUnsafe          = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
-ShortUnsafe         = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
+ByteUnsafe          = JClass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
+CharUnsafe          = JClass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
+DoubleUnsafe        = JClass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
+FloatUnsafe         = JClass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
+IntUnsafe           = JClass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
+LongUnsafe          = JClass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
+ShortUnsafe         = JClass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
 
 
 # does not work with strided accesses, currently
