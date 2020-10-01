@@ -3,7 +3,7 @@ from __future__ import division
 import logging
 import numpy as np
 
-from jpype import JClass, JImplements
+from jpype import JClass, JImplements, JOverride
 
 _logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ BdvFunctions = JClass('bdv.util.BdvFunctions')
 BdvOptions   = JClass('bdv.util.BdvOptions')
 
 # Guard
-ReferenceGuardingRandomAccessibleInterval = JClass('net/imglib2/python/ReferenceGuardingRandomAccessibleInterval')
+ReferenceGuardingRandomAccessibleInterval = JClass('net.imglib2.python.ReferenceGuardingRandomAccessibleInterval')
 
 numpy_dtype_to_conversion_method = {
     np.dtype('complex64')  : NumpyToImgLibConversions.toComplexFloat,
@@ -107,6 +107,20 @@ def _to_imglib_argb(source):
 def options2D():
     return BdvOptions.options().is2D()
 
+@JImplements('java.awt.event.MouseMotionListener')
+class GenericMouseMotionListener():
+
+    def __init__(self, mouse_dragged=lambda e: None, mouse_moved=lambda e: None):
+        super(GenericMouseMotionListener, self).__init__()
+        self.mouse_dragged = mouse_dragged
+        self.mouse_moved = mouse_moved
+    @JOverride
+    def mouseDragged(self, e):
+        self.mouse_dragged(e)
+    @JOverride
+    def mouseMoved(self, e):
+        self.mouse_moved(e)
+
 @JImplements('net.imglib2.ui.OverlayRenderer')
 class GenericOverlayRenderer():
     
@@ -115,26 +129,12 @@ class GenericOverlayRenderer():
         self.draw_overlays = draw_overlays
         self.set_canvas_size = set_canvas_size
 
+    @JOverride
     def drawOverlays(self, g):
         self.draw_overlays(g)
-
+    @JOverride
     def setCanvasSize(self, width, height):
         self.set_canvas_size(width, height)
-
-
-@JImplements('java.awt.event.MouseMotionListener')
-class GenericMouseMotionListener():
-
-    def __init__(self, mouse_dragged=lambda e: None, mouse_moved=lambda e: None):
-        super(GenericMouseMotionListener, self).__init__()
-        self.mouse_dragged = mouse_dragged
-        self.mouse_moved = mouse_moved
-
-    def mouseDragged(self, e):
-        self.mouse_dragged(e)
-
-    def mouseMoved(self, e):
-        self.mouse_moved(e)
 
 @JImplements('java.lang.Runnable')
 class RunnableFromFunc():
@@ -142,7 +142,7 @@ class RunnableFromFunc():
     def __init__(self, func):
         super(RunnableFromFunc, self).__init__()
         self.func = func
-
+    @JOverride
     def run(self):
         _logger.debug('Running function %s', self.func)
         self.func()
