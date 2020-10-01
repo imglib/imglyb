@@ -2,7 +2,7 @@ import logging
 import math
 import numpy as np
 
-from jpype import JClass, JException, JImplements
+from jpype import JClass, JException, JImplements, JOverride
 from . import accesses
 from . import types
 from .caches import BoundedSoftRefLoaderCache
@@ -24,7 +24,7 @@ def identity(x):
     return x
 
 @JImplements('java.util.function.LongFunction')
-class MakeAccessFunction(PythonJavaClass):
+class MakeAccessFunction():
     """
     Implements a java `LongFunction` that can be passed into `PythonHelpers.imgFromFunc` and
     `PythonHelpers.imgWithCellLoaderFromFunc`.
@@ -34,6 +34,7 @@ class MakeAccessFunction(PythonJavaClass):
         super(MakeAccessFunction, self).__init__()
         self.func = func
 
+    @JOverride
     def apply(self, index):
         access = self.func(index)
         return access
