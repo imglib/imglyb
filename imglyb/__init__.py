@@ -33,9 +33,6 @@ def _init_jvm_options():
 
     return 
 
-
-config = _init_jvm_options()
-
 from .imglib_ndarray import ImgLibReferenceGuard as _ImgLibReferenceGuard
 from .ndarray_like_as_img import \
     as_cell_img, \
