@@ -31,7 +31,7 @@ def _init_jvm_options():
 
     import scyjava
 
-    return 
+    return
 
 from .imglib_ndarray import ImgLibReferenceGuard as _ImgLibReferenceGuard
 from .ndarray_like_as_img import \
