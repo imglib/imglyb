@@ -69,7 +69,6 @@ def _get_address(source):
 class ReferenceGuard():
 
     def __init__(self, *args, **kwargs):
-        super(ReferenceGuard, self).__init__()
         self.args = args
 
 # how to use type hints for python < 3.5?
@@ -111,7 +110,6 @@ def options2D():
 class GenericMouseMotionListener():
 
     def __init__(self, mouse_dragged=lambda e: None, mouse_moved=lambda e: None):
-        super(GenericMouseMotionListener, self).__init__()
         self.mouse_dragged = mouse_dragged
         self.mouse_moved = mouse_moved
     @JOverride
@@ -125,7 +123,6 @@ class GenericMouseMotionListener():
 class GenericOverlayRenderer():
     
     def __init__(self, draw_overlays=lambda g: None, set_canvas_size=lambda w, h: None):
-        super(GenericOverlayRenderer, self).__init__()
         self.draw_overlays = draw_overlays
         self.set_canvas_size = set_canvas_size
 
@@ -140,7 +137,6 @@ class GenericOverlayRenderer():
 class RunnableFromFunc():
 
     def __init__(self, func):
-        super(RunnableFromFunc, self).__init__()
         self.func = func
     @JOverride
     def run(self):

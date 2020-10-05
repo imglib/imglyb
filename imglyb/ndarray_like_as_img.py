@@ -31,7 +31,6 @@ class MakeAccessFunction():
     """
 
     def __init__(self, func):
-        super(MakeAccessFunction, self).__init__()
         self.func = func
 
     @JOverride
