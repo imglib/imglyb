@@ -2,8 +2,9 @@ from __future__ import division
 
 import logging
 import numpy as np
+import jpype.imports #remove after debug
 
-from jpype import JClass, JImplements, JOverride
+from jpype import JClass, JImplements, JOverride, JLong, JArray
 
 _logger = logging.getLogger(__name__)
 
@@ -79,13 +80,17 @@ def to_imglib(source):
 # how to use type hints for python < 3.5?
 def _to_imglib(source):
     address = _get_address(source)
+    long_address = JLong(address)
+    long_arr_source = JArray(JLong)(source.shape[::-1])
+
     if not source.dtype in numpy_dtype_to_conversion_method:
         raise NotImplementedError("Cannot convert dtype to ImgLib2 type yet: {}".format(source.dtype))
     elif source.flags['CARRAY']:
-        return numpy_dtype_to_conversion_method[source.dtype](address, *source.shape[::-1])
+        return numpy_dtype_to_conversion_method[source.dtype](long_address, *long_arr_source)
     else:
         stride = np.array(source.strides[::-1]) / source.itemsize
-        return numpy_dtype_to_conversion_with_stride_method[source.dtype](address, tuple(stride), source.shape[::-1])
+        long_arr_stride = JArray(JLong)(stride)
+        return numpy_dtype_to_conversion_with_stride_method[source.dtype](long_address, long_arr_stride, long_arr_source)
 
 
 def to_imglib_argb(source):
@@ -94,13 +99,17 @@ def to_imglib_argb(source):
 
 def _to_imglib_argb(source):
     address = _get_address(source)
+    long_address = JLong(address)
+    long_arr_source = JArray(JLong)(source.shape[::-1])
+
     if not (source.dtype == np.dtype('int32') or source.dtype == np.dtype('uint32')):
         raise NotImplementedError("source.dtype must be int32 or uint32")
     if source.flags['CARRAY']:
-        return NumpyToImgLibConversions.toARGB(address, *source.shape[::-1])
+        return NumpyToImgLibConversions.toARGB(long_address, *long_arr_source)
     else:
         stride = np.array(source.strides[::-1]) / source.itemsize
-        return NumpyToImgLibConversionsWithStride.toARGB(address, tuple(stride), source.shape[::-1])
+        long_arr_stride = JArray(JLong)(stride)
+        return NumpyToImgLibConversionsWithStride.toARGB(long_address, long_arr_stride, long_arr_source)
 
 
 def options2D():
