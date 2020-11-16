@@ -1,14 +1,14 @@
 import dask.array as da
 import dask_image.ndfilters as ndfilters
 import h5py
-import scyjava_config
+import scyjava.config
 import threading
 import time
 
 import logging
 logging.basicConfig(level=logging.INFO)
 
-scyjava_config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
+scyjava.config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
 
 import imglyb
 from jnius import autoclass, cast, JavaException

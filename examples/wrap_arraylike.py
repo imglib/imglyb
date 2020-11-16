@@ -1,5 +1,5 @@
-import scyjava_config
-scyjava_config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
+import scyjava.config
+scyjava.config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
 
 import imglyb
 import numpy as np

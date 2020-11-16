@@ -1,10 +1,10 @@
 import dask.array as da
 import numpy as np
-import scyjava_config
+import scyjava.config
 import threading
 import time
 
-scyjava_config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
+scyjava.config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
 
 import imglyb
 from jnius import autoclass, JavaException
