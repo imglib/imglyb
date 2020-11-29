@@ -6,11 +6,11 @@ _logger = logging.getLogger(__name__)
 __all__ = ('to_imglib', 'to_imglib_argb', 'to_numpy')
 
 def _init_jvm_options():
-    import imglyb_config
+    from .config import get_imglib2_imglyb_version
     import jpype
     import scyjava.config
 
-    imglib2_imglyb_version = imglyb_config.get_imglib2_imglyb_version()
+    imglib2_imglyb_version = get_imglib2_imglyb_version()
 
     if scyjava.config.jvm_status():
         _logger.warning('JVM is already running, will not add relevant endpoints to classpath -- '

@@ -1,1 +1,1 @@
-from imglyb_config import version as __version__
+from .config import version as __version__
