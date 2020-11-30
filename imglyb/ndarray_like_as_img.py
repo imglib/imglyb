@@ -159,12 +159,7 @@ def _get_chunk_access_array(array, chunk_shape, index, chunk_as_array, use_volat
             ptype)
 
     except JException as e:
-        print("exception    ", e)
-        print("cause        ", e.__cause__)
-        print("inner message", e.innermessage)
-        if e.stacktrace:
-            for line in e.stacktrace:
-                print(line)
+        _logger.error(scyjava.jstacktrace(e))
         raise e
 
 
@@ -184,12 +179,7 @@ def _get_chunk_access_unsafe(array, chunk_shape, index, chunk_as_array, referenc
         return access
 
     except JException as e:
-        print("exception    ", e)
-        print("cause        ", e.__cause__)
-        print("inner message", e.innermessage)
-        if e.stacktrace:
-            for line in e.stacktrace:
-                print(line)
+        _logger.error(scyjava.jstacktrace(e))
         raise e
 
 
@@ -276,13 +266,7 @@ def as_cell_img_with_native_accesses(array, chunk_shape, chunk_as_array, cache, 
             cache)
 
     except JException as e:
-        print("exception    ", e)
-        print("cause        ", e.__cause__)
-        print("inner message", e.innermessage)
-        print("stack trace  ", e.stacktrace)
-        if e.stacktrace:
-            for line in e.stacktrace:
-                print(line)
+        _logger.error(jstacktrace(e))
         raise e
 
     return img, reference_store
