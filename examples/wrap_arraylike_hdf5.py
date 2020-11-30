@@ -1,19 +1,18 @@
 import h5py
 import numpy as np
-import scyjava.config
+import imglyb
+import scyjava
 import threading
 import time
 
-scyjava.config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
-
-import imglyb
-from jnius import autoclass, JavaException
+scyjava.config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-25')
+scyjava.start_jvm()
 
 path = '/home/hanslovskyp/Downloads/sample_A_padded_20160501.hdf'
 
 BdvFunctions        = imglyb.util.BdvFunctions
-VolatileTypeMatcher = autoclass('bdv.util.volatiles.VolatileTypeMatcher')
-VolatileViews       = autoclass('bdv.util.volatiles.VolatileViews')
+VolatileTypeMatcher = scyjava.jimport('bdv.util.volatiles.VolatileTypeMatcher')
+VolatileViews       = scyjava.jimport('bdv.util.volatiles.VolatileViews')
 
 file       = h5py.File(path, 'r')
 ds         = file['volumes/raw']
@@ -21,12 +20,8 @@ block_size = (32,) * 3
 img, _     = imglyb.as_cell_img(ds, block_size, access_type='array', cache=10000)
 try:
     vimg   = VolatileViews.wrapAsVolatile(img)
-except JavaException as e:
-    print(e.classname)
-    print(e.innermessage)
-    if e.stacktrace:
-        for s in e.stacktrace:
-            print(s)
+except Exception as e:
+    print(scyjava.jstacktrace(e))
     raise e
 
 bdv = BdvFunctions.show(vimg, 'raw')

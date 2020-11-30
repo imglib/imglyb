@@ -1,17 +1,16 @@
 import dask.array as da
 import dask_image.ndfilters as ndfilters
 import h5py
-import scyjava.config
+import imglyb
+import scyjava
 import threading
 import time
 
 import logging
 logging.basicConfig(level=logging.INFO)
 
-scyjava.config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
-
-import imglyb
-from jnius import autoclass, cast, JavaException
+scyjava.config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-25')
+scyjava.start_jvm()
 
 path = '/home/hanslovskyp/Downloads/sample_A_20160501.hdf'
 
@@ -26,8 +25,8 @@ def identity(x):
 
 BdvFunctions        = imglyb.util.BdvFunctions
 BdvOptions          = imglyb.util.BdvOptions
-VolatileTypeMatcher = autoclass('bdv.util.volatiles.VolatileTypeMatcher')
-VolatileViews       = autoclass('bdv.util.volatiles.VolatileViews')
+VolatileTypeMatcher = scyjava.jimport('bdv.util.volatiles.VolatileTypeMatcher')
+VolatileViews       = scyjava.jimport('bdv.util.volatiles.VolatileViews')
 
 block_size = (30,) * 3
 file       = h5py.File(path, 'r')
@@ -40,18 +39,14 @@ img2, s2   = imglyb.as_cell_img(smoothed, block_size, cache=100, access_type='na
 try:
     vimg1  = VolatileViews.wrapAsVolatile(img1)
     vimg2  = VolatileViews.wrapAsVolatile(img2)
-except JavaException as e:
-    print(e.classname)
-    print(e.innermessage)
-    if e.stacktrace:
-        for s in e.stacktrace:
-            print(s)
+except Exception as e:
+    print(scyjava.jstacktrace(e))
     raise e
 
 bdv = BdvFunctions.show(vimg1, 'raw')
 BdvFunctions.show(vimg2, 'smoothed', BdvOptions.options().addTo(bdv))
 
-System = autoclass('java.lang.System')
+System = scyjava.jimport('java.lang.System')
 
 def runUntilBdvDoesNotShow():
     panel = bdv.getBdvHandle().getViewerPanel()

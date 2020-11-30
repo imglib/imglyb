@@ -1,16 +1,12 @@
 """
+This script is a wrapper to allow Java code that uses AWT to run properly on
+macOS. It starts the Cocoa event loop before Java and keeps Cocoa happy.
 
-This script is a wrapper to allow imglib2-imglyb code that uses Java's AWT
-to run properly on OS X.  It starts the Cocoa event loop before Java and
-keeps Cocoa happy  See https://github.com/kivy/pyjnius/issues/151 for more.
+See https://github.com/kivy/pyjnius/issues/151 for more.
 
 In particular, this wrapper allows one to run the code from imglyb-examples.
 
-Tested in Python 3 only!  Not sure if you'd need to change anything for Python 2
-beyond the print statements.
-
 usage: python OSXAWTwrapper.py [module name | script path] [module or script parameters]
-
 """
 
 import os
