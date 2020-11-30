@@ -21,5 +21,7 @@ setup(
     description='A python module to bring together the worlds of numpy (Python) and ImgLib2 (Java).',
     long_description=imglyb_long_description,
     long_description_content_type='text/markdown',
+    license='Simplified BSD License',
+    url='https://github.com/imglib/imglyb',
     install_requires=['numpy', 'jpype1', 'scyjava'],
 )
