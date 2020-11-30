@@ -1,36 +1,66 @@
 import numpy as np
+import scyjava
 
-from jnius import autoclass
+def _java_setup():
+    """
+    Lazy initialization function for Java-dependent data structures.
+    Do not call this directly; use scyjava.start_jvm() instead.
+    """
 
-Accesses            = autoclass('net.imglib2.img.basictypeaccess.Accesses')
+    global Accesses
+    Accesses            = scyjava.jimport('net.imglib2.img.basictypeaccess.Accesses')
 
-ByteArray           = autoclass('net.imglib2.img.basictypeaccess.array.ByteArray')
-CharArray           = autoclass('net.imglib2.img.basictypeaccess.array.CharArray')
-DoubleArray         = autoclass('net.imglib2.img.basictypeaccess.array.DoubleArray')
-FloatArray          = autoclass('net.imglib2.img.basictypeaccess.array.FloatArray')
-IntArray            = autoclass('net.imglib2.img.basictypeaccess.array.IntArray')
-LongArray           = autoclass('net.imglib2.img.basictypeaccess.array.LongArray')
-ShortArray          = autoclass('net.imglib2.img.basictypeaccess.array.ShortArray')
+    global ByteArray
+    ByteArray           = scyjava.jimport('net.imglib2.img.basictypeaccess.array.ByteArray')
+    global CharArray
+    CharArray           = scyjava.jimport('net.imglib2.img.basictypeaccess.array.CharArray')
+    global DoubleArray
+    DoubleArray         = scyjava.jimport('net.imglib2.img.basictypeaccess.array.DoubleArray')
+    global FloatArray
+    FloatArray          = scyjava.jimport('net.imglib2.img.basictypeaccess.array.FloatArray')
+    global IntArray
+    IntArray            = scyjava.jimport('net.imglib2.img.basictypeaccess.array.IntArray')
+    global LongArray
+    LongArray           = scyjava.jimport('net.imglib2.img.basictypeaccess.array.LongArray')
+    global ShortArray
+    ShortArray          = scyjava.jimport('net.imglib2.img.basictypeaccess.array.ShortArray')
 
-VolatileByteArray   = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileByteArray')
-VolatileCharArray   = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileCharArray')
-VolatileDoubleArray = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileDoubleArray')
-VolatileFloatArray  = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileFloatArray')
-VolatileIntArray    = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileIntArray')
-VolatileLongArray   = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileLongArray')
-VolatileShortArray  = autoclass('net.imglib2.img.basictypeaccess.volatiles.array.VolatileShortArray')
+    global VolatileByteArray
+    VolatileByteArray   = scyjava.jimport('net.imglib2.img.basictypeaccess.volatiles.array.VolatileByteArray')
+    global VolatileCharArray
+    VolatileCharArray   = scyjava.jimport('net.imglib2.img.basictypeaccess.volatiles.array.VolatileCharArray')
+    global VolatileDoubleArray
+    VolatileDoubleArray = scyjava.jimport('net.imglib2.img.basictypeaccess.volatiles.array.VolatileDoubleArray')
+    global VolatileFloatArray
+    VolatileFloatArray  = scyjava.jimport('net.imglib2.img.basictypeaccess.volatiles.array.VolatileFloatArray')
+    global VolatileIntArray
+    VolatileIntArray    = scyjava.jimport('net.imglib2.img.basictypeaccess.volatiles.array.VolatileIntArray')
+    global VolatileLongArray
+    VolatileLongArray   = scyjava.jimport('net.imglib2.img.basictypeaccess.volatiles.array.VolatileLongArray')
+    global VolatileShortArray
+    VolatileShortArray  = scyjava.jimport('net.imglib2.img.basictypeaccess.volatiles.array.VolatileShortArray')
 
-ByteUnsafe          = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
-CharUnsafe          = autoclass('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
-DoubleUnsafe        = autoclass('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
-FloatUnsafe         = autoclass('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
-IntUnsafe           = autoclass('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
-LongUnsafe          = autoclass('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
-ShortUnsafe         = autoclass('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
+    global ByteUnsafe
+    ByteUnsafe          = scyjava.jimport('net.imglib2.img.basictypelongaccess.unsafe.ByteUnsafe')
+    global CharUnsafe
+    CharUnsafe          = scyjava.jimport('net.imglib2.img.basictypelongaccess.unsafe.CharUnsafe')
+    global DoubleUnsafe
+    DoubleUnsafe        = scyjava.jimport('net.imglib2.img.basictypelongaccess.unsafe.DoubleUnsafe')
+    global FloatUnsafe
+    FloatUnsafe         = scyjava.jimport('net.imglib2.img.basictypelongaccess.unsafe.FloatUnsafe')
+    global IntUnsafe
+    IntUnsafe           = scyjava.jimport('net.imglib2.img.basictypelongaccess.unsafe.IntUnsafe')
+    global LongUnsafe
+    LongUnsafe          = scyjava.jimport('net.imglib2.img.basictypelongaccess.unsafe.LongUnsafe')
+    global ShortUnsafe
+    ShortUnsafe         = scyjava.jimport('net.imglib2.img.basictypelongaccess.unsafe.ShortUnsafe')
+
+scyjava.when_jvm_starts(_java_setup)
 
 
 # does not work with strided accesses, currently
 def as_array_access(ndarray, volatile=False):
+    scyjava.start_jvm()
     if ndarray.dtype == np.uint8 or ndarray.dtype == np.int8:
         return _as_array_access(ndarray, ByteUnsafe, lambda n : VolatileByteArray(n, True) if volatile else ByteArray(n))
     elif ndarray.dtype == np.uint16 or ndarray.dtype == np.int16:

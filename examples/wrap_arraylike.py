@@ -1,9 +1,8 @@
-import scyjava_config
-scyjava_config.add_endpoints('sc.fiji:bigdataviewer-vistools:1.0.0-beta-18')
-
 import imglyb
 import numpy as np
-from jnius import cast
+import scyjava
+
+scyjava.start_jvm()
 
 Views = imglyb.util.Views
 
@@ -28,7 +27,7 @@ print(data)
 
 print()
 print('cells')
-cursor = cast('net.imglib2.IterableInterval', img.getCells()).cursor()
+cursor = img.getCells().cursor()
 cellIdx = 0
 while cursor.hasNext():
     cell = cursor.next()
@@ -38,4 +37,3 @@ while cursor.hasNext():
     for idx in range(0, size):
         print(access.getValue(idx))
     cellIdx += 1
-    break

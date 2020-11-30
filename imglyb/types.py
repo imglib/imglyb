@@ -1,34 +1,62 @@
 import numpy as np
+import scyjava
 
-import imglyb
-from jnius import autoclass, MetaJavaClass
+def _java_setup():
+    """
+    Lazy initialization function for Java-dependent data structures.
+    Do not call this directly; use scyjava.start_jvm() instead.
+    """
 
-NativeType = autoclass('net.imglib2.type.NativeType')
+    global NativeType
+    NativeType                = scyjava.jimport('net.imglib2.type.NativeType')
 
-FloatType                 = autoclass('net.imglib2.type.numeric.real.FloatType')
-DoubleType                = autoclass('net.imglib2.type.numeric.real.DoubleType')
-ByteType                  = autoclass('net.imglib2.type.numeric.integer.ByteType')
-UnsignedByteType          = autoclass('net.imglib2.type.numeric.integer.UnsignedByteType')
-ShortType                 = autoclass('net.imglib2.type.numeric.integer.ShortType')
-UnsignedShortType         = autoclass('net.imglib2.type.numeric.integer.UnsignedShortType')
-IntType                   = autoclass('net.imglib2.type.numeric.integer.IntType')
-UnsignedIntType           = autoclass('net.imglib2.type.numeric.integer.UnsignedIntType')
-LongType                  = autoclass('net.imglib2.type.numeric.integer.LongType')
-UnsignedLongType          = autoclass('net.imglib2.type.numeric.integer.UnsignedLongType')
+    global FloatType
+    FloatType                 = scyjava.jimport('net.imglib2.type.numeric.real.FloatType')
+    global DoubleType
+    DoubleType                = scyjava.jimport('net.imglib2.type.numeric.real.DoubleType')
+    global ByteType
+    ByteType                  = scyjava.jimport('net.imglib2.type.numeric.integer.ByteType')
+    global UnsignedByteType
+    UnsignedByteType          = scyjava.jimport('net.imglib2.type.numeric.integer.UnsignedByteType')
+    global ShortType
+    ShortType                 = scyjava.jimport('net.imglib2.type.numeric.integer.ShortType')
+    global UnsignedShortType
+    UnsignedShortType         = scyjava.jimport('net.imglib2.type.numeric.integer.UnsignedShortType')
+    global IntType
+    IntType                   = scyjava.jimport('net.imglib2.type.numeric.integer.IntType')
+    global UnsignedIntType
+    UnsignedIntType           = scyjava.jimport('net.imglib2.type.numeric.integer.UnsignedIntType')
+    global LongType
+    LongType                  = scyjava.jimport('net.imglib2.type.numeric.integer.LongType')
+    global UnsignedLongType
+    UnsignedLongType          = scyjava.jimport('net.imglib2.type.numeric.integer.UnsignedLongType')
 
-VolatileFloatType         = autoclass('net.imglib2.type.volatiles.VolatileFloatType')
-VolatileDoubleType        = autoclass('net.imglib2.type.volatiles.VolatileDoubleType')
-VolatileByteType          = autoclass('net.imglib2.type.volatiles.VolatileByteType')
-VolatileUnsignedByteType  = autoclass('net.imglib2.type.volatiles.VolatileUnsignedByteType')
-VolatileShortType         = autoclass('net.imglib2.type.volatiles.VolatileShortType')
-VolatileUnsignedShortType = autoclass('net.imglib2.type.volatiles.VolatileUnsignedShortType')
-VolatileIntType           = autoclass('net.imglib2.type.volatiles.VolatileIntType')
-VolatileUnsignedIntType   = autoclass('net.imglib2.type.volatiles.VolatileUnsignedIntType')
-VolatileLongType          = autoclass('net.imglib2.type.volatiles.VolatileLongType')
-VolatileUnsignedLongType  = autoclass('net.imglib2.type.volatiles.VolatileUnsignedLongType')
+    global VolatileFloatType
+    VolatileFloatType         = scyjava.jimport('net.imglib2.type.volatiles.VolatileFloatType')
+    global VolatileDoubleType
+    VolatileDoubleType        = scyjava.jimport('net.imglib2.type.volatiles.VolatileDoubleType')
+    global VolatileByteType
+    VolatileByteType          = scyjava.jimport('net.imglib2.type.volatiles.VolatileByteType')
+    global VolatileUnsignedByteType
+    VolatileUnsignedByteType  = scyjava.jimport('net.imglib2.type.volatiles.VolatileUnsignedByteType')
+    global VolatileShortType
+    VolatileShortType         = scyjava.jimport('net.imglib2.type.volatiles.VolatileShortType')
+    global VolatileUnsignedShortType
+    VolatileUnsignedShortType = scyjava.jimport('net.imglib2.type.volatiles.VolatileUnsignedShortType')
+    global VolatileIntType
+    VolatileIntType           = scyjava.jimport('net.imglib2.type.volatiles.VolatileIntType')
+    global VolatileUnsignedIntType
+    VolatileUnsignedIntType   = scyjava.jimport('net.imglib2.type.volatiles.VolatileUnsignedIntType')
+    global VolatileLongType
+    VolatileLongType          = scyjava.jimport('net.imglib2.type.volatiles.VolatileLongType')
+    global VolatileUnsignedLongType
+    VolatileUnsignedLongType  = scyjava.jimport('net.imglib2.type.volatiles.VolatileUnsignedLongType')
+
+scyjava.when_jvm_starts(_java_setup)
 
 
 def for_np_dtype(dtype, volatile=False):
+    scyjava.start_jvm()
     if dtype == np.uint8:
         return VolatileUnsignedByteType() if volatile else UnsignedByteType()
     if dtype == np.int8:
@@ -53,4 +81,3 @@ def for_np_dtype(dtype, volatile=False):
         return VolatileFloatType() if volatile else FloatType()
     if dtype == np.float64:
         return VolatileDoubleType() if volatile else DoubleType()
-
