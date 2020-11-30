@@ -1,11 +1,19 @@
-from imglyb import util
-
 import ctypes
+
 import numpy as np
 import jpype
-import jpype.imports
+import scyjava
 
-Intervals = jpype.JClass('net.imglib2.util.Intervals')
+from imglyb import util
+
+def _java_setup():
+    """
+    Lazy initialization function for Java-dependent data structures.
+    Do not call this directly; use scyjava.start_jvm() instead.
+    """
+    Intervals = scyjava.jimport('net.imglib2.util.Intervals')
+
+scyjava.when_jvm_starts(_java_setup)
 
 dtype_selector = {
     'FloatType': np.dtype('float32'),
@@ -35,6 +43,7 @@ ctype_conversions_imglib = {
 
 
 def get_address(rai):
+    scyjava.start_jvm()
     class_name = util.Helpers.classNameSimple(rai)
     class_name_full = util.Helpers.className(rai)
     if class_name in ('ArrayImg', 'UnsafeImg'):
@@ -74,13 +83,12 @@ class ImgLibReferenceGuard(np.ndarray):
 
 
 if __name__ == "__main__":
-
-    ArrayImgs = jpype.JClass('net.imglib2.img.array.ArrayImgs')
-    UnsafeUtil = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.UnsafeUtil')
-    Arrays = jpype.JClass('java.util.Arrays')
-    OwningFloatUnsafe = jpype.JClass('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
-    Fraction = jpype.JClass('net.imglib2.util.Fraction')
-    LongStream = jpype.JClass('java.util.stream.LongStream')
+    ArrayImgs = scyjava.jimport('net.imglib2.img.array.ArrayImgs')
+    UnsafeUtil = scyjava.jimport('net.imglib2.img.basictypelongaccess.unsafe.UnsafeUtil')
+    Arrays = scyjava.jimport('java.util.Arrays')
+    OwningFloatUnsafe = scyjava.jimport('net.imglib2.img.basictypelongaccess.unsafe.owning.OwningFloatUnsafe')
+    Fraction = scyjava.jimport('net.imglib2.util.Fraction')
+    LongStream = scyjava.jimport('java.util.stream.LongStream')
 
     shape = (2, 3, 4)
     n_elements = int(np.prod(shape))
