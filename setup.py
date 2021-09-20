@@ -16,7 +16,7 @@ setup(
     python_requires='>=3',
     packages=find_packages(),
     version=version,
-    author='Philipp Hanslovsky, Curtis Rueden, Edward Evans',
+    author='Philipp Hanslovsky, Curtis Rueden, Edward Evans, Mark Hiner',
     author_email='ctrueden@wisc.edu',
     description='A python module to bring together the worlds of numpy (Python) and ImgLib2 (Java).',
     long_description=imglyb_long_description,
