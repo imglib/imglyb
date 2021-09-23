@@ -30,7 +30,7 @@ _version = _Version()
 
 version = _version.version()
 
-_default_imglib2_imglyb_version = '1.0.0'
+_default_imglib2_imglyb_version = '1.0.1'
 _imglib2_imglyb_version         = os.getenv('IMGLIB2_IMGLYB_VERSION', _default_imglib2_imglyb_version)
 
 
