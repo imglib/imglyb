@@ -4,5 +4,6 @@
 target
 __pycache__
 build
+dist
 *.pyc
 imglyb.egg-info
