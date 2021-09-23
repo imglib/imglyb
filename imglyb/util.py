@@ -9,8 +9,7 @@ _logger = logging.getLogger(__name__)
 
 __all__ = (
     'to_imglib',
-    'to_imglib_argb',
-    'options2D'
+    'to_imglib_argb'
 )
 
 def _java_setup():
@@ -32,12 +31,6 @@ def _java_setup():
     NumpyToImgLibConversionsWithStride = scyjava.jimport('net.imglib2.python.NumpyToImgLibConversionsWithStride')
     global Views
     Views                              = scyjava.jimport('net.imglib2.view.Views')
-
-    # bigdataviewer
-    global BdvFunctions
-    BdvFunctions = scyjava.jimport('bdv.util.BdvFunctions')
-    global BdvOptions
-    BdvOptions   = scyjava.jimport('bdv.util.BdvOptions')
 
     # Guard
     global ReferenceGuardingRandomAccessibleInterval
@@ -98,21 +91,6 @@ def _java_setup():
         def mouseMoved(self, e):
             self.mouse_moved(e)
 
-    global GenericOverlayRenderer
-    @JImplements('net.imglib2.ui.OverlayRenderer')
-    class GenericOverlayRenderer():
-
-        def __init__(self, draw_overlays=lambda g: None, set_canvas_size=lambda w, h: None):
-            self.draw_overlays = draw_overlays
-            self.set_canvas_size = set_canvas_size
-
-        @JOverride
-        def drawOverlays(self, g):
-            self.draw_overlays(g)
-
-        @JOverride
-        def setCanvasSize(self, width, height):
-            self.set_canvas_size(width, height)
 
     global RunnableFromFunc
     @JImplements('java.lang.Runnable')
@@ -173,8 +151,3 @@ def _to_imglib_argb(source):
         stride = np.array(source.strides[::-1]) / source.itemsize
         long_arr_stride = JArray(JLong)(stride)
         return NumpyToImgLibConversionsWithStride.toARGB(long_address, long_arr_stride, long_arr_source)
-
-
-def options2D():
-    scyjava.start_jvm()
-    return BdvOptions.options().is2D()

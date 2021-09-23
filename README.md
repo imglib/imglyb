@@ -10,7 +10,7 @@ them to `ImgLib2` through
 This means **shared memory** between `numpy` and `ImgLib2`, i.e. any `ImgLib2`
 algorithm can run on `numpy` arrays without creating copies of the data!
 For example, Python users can now make use of the
-[BigDataViewer](https://imagej.net/BigDataViewer) to visualize dense volumetric
+[BigDataViewer extension](https://github.com/imglib/imglyb-bdv) to visualize dense volumetric
 data.
 
 If you are interested in using `imglyb`, have a look at the `examples` folder
