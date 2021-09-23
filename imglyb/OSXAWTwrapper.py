@@ -13,11 +13,6 @@ import os
 import sys
 
 
-import objc
-from Foundation import *
-from AppKit import *
-from PyObjCTools import AppHelper
-
 usage = "usage: python OSXAWTwrapper.py [module name | script path] [module or script parameters]"
 
 def runAwtStuff():
@@ -59,32 +54,39 @@ def runAwtStuff():
         print("no module or script specified")
 
 
-class AppDelegate (NSObject):
-    def init(self):
-        self = objc.super(AppDelegate, self).init()
-        if self is None:
-            return None
-        return self
-
-    def runjava_(self, arg):
-        runAwtStuff()
-        # we need to terminate explicitly, or it'll hang when
-        #   the wrapped code exits
-        NSApp().terminate_(self)
-
-    def applicationDidFinishLaunching_(self, aNotification):
-        self.performSelectorInBackground_withObject_("runjava:", 0)
-
-
 def main():
-    app = NSApplication.sharedApplication()
-    delegate = AppDelegate.alloc().init()
-    NSApp().setDelegate_(delegate)
-    # this is necessary to have keyboard events sent to the UI;
-    #   basically this call makes the script act like an OS X application,
-    #   with Dock icon and everything
-    NSApp.setActivationPolicy_(NSApplicationActivationPolicyRegular)
-    AppHelper.runEventLoop()
+    try:
+        import objc
+        from PyObjCTools import AppHelper
+        from AppKit import NSApplication, NSApp
+        # from Foundation import *
+
+        class AppDelegate (NSObject):
+            def init(self):
+                self = objc.super(AppDelegate, self).init()
+                if self is None:
+                    return None
+                return self
+
+            def runjava_(self, arg):
+                runAwtStuff()
+                # we need to terminate explicitly, or it'll hang when
+                #   the wrapped code exits
+                NSApp().terminate_(self)
+
+            def applicationDidFinishLaunching_(self, aNotification):
+                self.performSelectorInBackground_withObject_("runjava:", 0)
+
+        app = NSApplication.sharedApplication()
+        delegate = AppDelegate.alloc().init()
+        NSApp().setDelegate_(delegate)
+        # this is necessary to have keyboard events sent to the UI;
+        #   basically this call makes the script act like an OS X application,
+        #   with Dock icon and everything
+        NSApp.setActivationPolicy_(NSApplicationActivationPolicyRegular)
+        AppHelper.runEventLoop()
+    except ModuleNotFoundError:
+        print("Skipping OSXAWTwrapper - module 'objc' is not installed") 
 
 if __name__ == '__main__' : 
     main()
