@@ -2,6 +2,7 @@ import logging
 import sys
 
 import scyjava
+import scyjava.config as sjconf
 
 from .config import get_imglib2_imglyb_version
 from .imglib_ndarray import ImgLibReferenceGuard as _ImgLibReferenceGuard
@@ -16,7 +17,7 @@ _logger = logging.getLogger(__name__)
 
 _imglib2_imglyb_version = get_imglib2_imglyb_version()
 _IMGLIB2_IMGLYB_ENDPOINT = 'net.imglib2:imglib2-imglyb:{}'.format(_imglib2_imglyb_version)
-scyjava.config.add_endpoints(_IMGLIB2_IMGLYB_ENDPOINT)
+sjconf.endpoints.append(_IMGLIB2_IMGLYB_ENDPOINT)
 
 
 def to_numpy(source):

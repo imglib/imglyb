@@ -23,5 +23,5 @@ setup(
     long_description_content_type='text/markdown',
     license='Simplified BSD License',
     url='https://github.com/imglib/imglyb',
-    install_requires=['numpy', 'jpype1', 'scyjava'],
+    install_requires=['numpy', 'jpype1', 'scyjava >= 1.3.0'],
 )
