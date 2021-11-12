@@ -23,14 +23,18 @@ def _java_setup():
     Random = scyjava.jimport('java.util.Random')
 
     # imglib
-    global Helpers
-    Helpers                            = scyjava.jimport('net.imglib2.python.Helpers')
-    global NumpyToImgLibConversions
-    NumpyToImgLibConversions           = scyjava.jimport('net.imglib2.python.NumpyToImgLibConversions')
-    global NumpyToImgLibConversionsWithStride
-    NumpyToImgLibConversionsWithStride = scyjava.jimport('net.imglib2.python.NumpyToImgLibConversionsWithStride')
-    global Views
-    Views                              = scyjava.jimport('net.imglib2.view.Views')
+    try:
+        global Helpers
+        Helpers                            = scyjava.jimport('net.imglib2.python.Helpers')
+        global NumpyToImgLibConversions
+        NumpyToImgLibConversions           = scyjava.jimport('net.imglib2.python.NumpyToImgLibConversions')
+        global NumpyToImgLibConversionsWithStride
+        NumpyToImgLibConversionsWithStride = scyjava.jimport('net.imglib2.python.NumpyToImgLibConversionsWithStride')
+        global Views
+        Views                              = scyjava.jimport('net.imglib2.view.Views')
+    except TypeError as e:
+        _logger.error("Failed to import ImgLib2 helper classes. Please ensure imglib2-imglyb is present on the classpath.")
+        raise e
 
     # Guard
     global ReferenceGuardingRandomAccessibleInterval
