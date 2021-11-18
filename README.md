@@ -1,3 +1,5 @@
+[![build status](https://github.com/imglib/imglyb/actions/workflows/python-test-conda.yml/badge.svg)](https://github.com/imglib/imglyb/actions/workflows/python-test-conda.yml)
+
 # imglyb
 
 `imglyb` aims at connecting two worlds that have been seperated for too long:
