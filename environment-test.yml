@@ -1,0 +1,9 @@
+# You can use this environment to run the tests, when imglyb will be
+# installed from source
+name: imglyb
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - scyjava

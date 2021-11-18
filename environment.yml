@@ -1,0 +1,8 @@
+name: imglyb
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - imglyb
+  - numpy
+  - scyjava
