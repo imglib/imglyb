@@ -125,7 +125,7 @@ def to_imglib(source):
 def _to_imglib(source):
     address = _get_address(source)
     long_address = JLong(address)
-    long_arr_source = JArray(JLong)(source.shape[::-1])
+    long_arr_source = JArray(JLong)(source.shape)
 
     if not source.dtype in numpy_dtype_to_conversion_method:
         raise NotImplementedError("Cannot convert dtype to ImgLib2 type yet: {}".format(source.dtype))
