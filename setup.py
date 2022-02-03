@@ -13,7 +13,7 @@ version = version_info['version']
 
 setup(
     name='imglyb',
-    python_requires='>=3',
+    python_requires='>=3.6',
     packages=find_packages(),
     version=version,
     author='Philipp Hanslovsky, Curtis Rueden, Edward Evans, Mark Hiner',
