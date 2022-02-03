@@ -7,6 +7,11 @@ See https://github.com/kivy/pyjnius/issues/151 for more.
 In particular, this wrapper allows one to run the code from imglyb-examples.
 
 usage: python OSXAWTwrapper.py [module name | script path] [module or script parameters]
+
+NB: Since the creation of this script, the imglyb project switched from pyjnius
+to jpype, and this script is not really necessary anymore. You can instead use
+jpype.setupGuiEnvironment(...), passing a function that does Java AWT things,
+and it will be executed on the correct thread.
 """
 
 import os
@@ -58,7 +63,7 @@ def main():
     try:
         import objc
         from PyObjCTools import AppHelper
-        from AppKit import NSApplication, NSApp
+        from AppKit import NSApplication, NSApp, NSObject, NSApplicationActivationPolicyRegular
         # from Foundation import *
 
         class AppDelegate (NSObject):
