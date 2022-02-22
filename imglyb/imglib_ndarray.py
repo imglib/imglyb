@@ -1,4 +1,5 @@
 import ctypes
+from typing import Any, Callable, Iterable, Mapping, MutableSequence
 
 import numpy as np
 import jpype
@@ -108,6 +109,97 @@ class ImgLibReferenceGuard(np.ndarray):
         if obj is None:
             return
         self.rai = obj.rai
+
+
+HANDLED_FUNCTIONS = {}
+class NumpyView(np.ndarray):
+    def __new__(cls, rai):
+        access = rai.randomAccess()
+        rai.min(access)
+        imglib_type = util.Helpers.classNameSimple(access.get())
+        dtype = dtype_selector[imglib_type]
+
+        shape = tuple(Intervals.dimensionsAsLongArray(rai))[::-1]
+        obj = super().__new__(NumpyView, shape=shape, dtype=dtype)
+
+        # Maintain a reference to the java object
+        obj.rai = rai
+        return obj
+    
+    def __init__(self, rai):
+        self.rai = rai
+
+    def __array_finalize__(self, obj):
+        if obj is None:
+            return
+        self.rai = obj.rai
+    
+    def __array_function__(self, func, types, args, kwargs):
+        if func not in HANDLED_FUNCTIONS:
+            return NotImplemented
+            # Note: this allows subclasses that don't override
+            # __array_function__ to handle DiagonalArray objects.
+        if not all(issubclass(t, self.__class__) for t in types):
+            return NotImplemented
+        return HANDLED_FUNCTIONS[func](*args, **kwargs)
+    
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            print('Got a slice')
+        elif isinstance(key, int):
+            Views = scyjava.jimport('net.imglib2.view.Views')
+            return NumpyView(Views.hyperSlice(self.rai, self.rai.numDimensions() - 1, key))
+        elif isinstance(key, tuple):
+            ra = self.rai.randomAccess()
+            for i in range(len(key)):
+                ra.setPosition(key[i] % self.shape[i], len(key) - 1 - i)
+            val = ra.get().get()
+            if val != 0:
+                print(val)
+            return ra.get().get()
+        else:
+            raise ValueError(f'Cannot parse key {key}')
+
+
+    def __setitem__(self, key, value):
+        # print(f'key: {key}')
+        # return 0
+        if isinstance(key, slice):
+            print('Got a slice')
+        elif isinstance(key, int):
+            print('Got an int')
+        elif isinstance(key, tuple):
+            ra = self.rai.randomAccess()
+            for i in range(len(key)):
+                ra.setPosition(key[i] % self.shape[i], len(key) -1 - i)
+            ra.get().set(value)
+        else:
+            raise ValueError(f'Cannot parse key {key}')
+    
+    def all(self): return np.all(self)
+    def any(self): return np.any(self)
+
+
+def implements(np_function):
+    "Register an __array_function__ implementation for DiagonalArray objects."
+    def decorator(func):
+        HANDLED_FUNCTIONS[np_function] = func
+        return func
+    return decorator
+
+
+@implements(np.all)
+def any(arr: NumpyView):
+    for l in np.ndindex(*arr.shape):
+        if not arr[l]: return False
+    return True
+
+
+@implements(np.any)
+def any(arr: NumpyView):
+    for l in np.ndindex(*arr.shape):
+        if arr[l]: return True
+    return False
 
 
 if __name__ == "__main__":
