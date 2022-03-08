@@ -2,8 +2,8 @@ import os
 
 __major__   = 2
 __minor__   = 0
-__patch__   = 1
-__tag__     = ''
+__patch__   = 2
+__tag__     = 'dev0'
 __version__ = f'{__major__}.{__minor__}.{__patch__}.{__tag__}'.strip('.')
 
 class _Version(object):
