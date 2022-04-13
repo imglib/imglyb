@@ -1,6 +1,7 @@
 import numpy as np
 import scyjava
 
+
 def _java_setup():
     """
     Lazy initialization function for Java-dependent data structures.
@@ -8,49 +9,68 @@ def _java_setup():
     """
 
     global NativeType
-    NativeType                = scyjava.jimport('net.imglib2.type.NativeType')
+    NativeType = scyjava.jimport("net.imglib2.type.NativeType")
 
     global FloatType
-    FloatType                 = scyjava.jimport('net.imglib2.type.numeric.real.FloatType')
+    FloatType = scyjava.jimport("net.imglib2.type.numeric.real.FloatType")
     global DoubleType
-    DoubleType                = scyjava.jimport('net.imglib2.type.numeric.real.DoubleType')
+    DoubleType = scyjava.jimport("net.imglib2.type.numeric.real.DoubleType")
     global ByteType
-    ByteType                  = scyjava.jimport('net.imglib2.type.numeric.integer.ByteType')
+    ByteType = scyjava.jimport("net.imglib2.type.numeric.integer.ByteType")
     global UnsignedByteType
-    UnsignedByteType          = scyjava.jimport('net.imglib2.type.numeric.integer.UnsignedByteType')
+    UnsignedByteType = scyjava.jimport(
+        "net.imglib2.type.numeric.integer.UnsignedByteType"
+    )
     global ShortType
-    ShortType                 = scyjava.jimport('net.imglib2.type.numeric.integer.ShortType')
+    ShortType = scyjava.jimport("net.imglib2.type.numeric.integer.ShortType")
     global UnsignedShortType
-    UnsignedShortType         = scyjava.jimport('net.imglib2.type.numeric.integer.UnsignedShortType')
+    UnsignedShortType = scyjava.jimport(
+        "net.imglib2.type.numeric.integer.UnsignedShortType"
+    )
     global IntType
-    IntType                   = scyjava.jimport('net.imglib2.type.numeric.integer.IntType')
+    IntType = scyjava.jimport("net.imglib2.type.numeric.integer.IntType")
     global UnsignedIntType
-    UnsignedIntType           = scyjava.jimport('net.imglib2.type.numeric.integer.UnsignedIntType')
+    UnsignedIntType = scyjava.jimport(
+        "net.imglib2.type.numeric.integer.UnsignedIntType"
+    )
     global LongType
-    LongType                  = scyjava.jimport('net.imglib2.type.numeric.integer.LongType')
+    LongType = scyjava.jimport("net.imglib2.type.numeric.integer.LongType")
     global UnsignedLongType
-    UnsignedLongType          = scyjava.jimport('net.imglib2.type.numeric.integer.UnsignedLongType')
+    UnsignedLongType = scyjava.jimport(
+        "net.imglib2.type.numeric.integer.UnsignedLongType"
+    )
 
     global VolatileFloatType
-    VolatileFloatType         = scyjava.jimport('net.imglib2.type.volatiles.VolatileFloatType')
+    VolatileFloatType = scyjava.jimport("net.imglib2.type.volatiles.VolatileFloatType")
     global VolatileDoubleType
-    VolatileDoubleType        = scyjava.jimport('net.imglib2.type.volatiles.VolatileDoubleType')
+    VolatileDoubleType = scyjava.jimport(
+        "net.imglib2.type.volatiles.VolatileDoubleType"
+    )
     global VolatileByteType
-    VolatileByteType          = scyjava.jimport('net.imglib2.type.volatiles.VolatileByteType')
+    VolatileByteType = scyjava.jimport("net.imglib2.type.volatiles.VolatileByteType")
     global VolatileUnsignedByteType
-    VolatileUnsignedByteType  = scyjava.jimport('net.imglib2.type.volatiles.VolatileUnsignedByteType')
+    VolatileUnsignedByteType = scyjava.jimport(
+        "net.imglib2.type.volatiles.VolatileUnsignedByteType"
+    )
     global VolatileShortType
-    VolatileShortType         = scyjava.jimport('net.imglib2.type.volatiles.VolatileShortType')
+    VolatileShortType = scyjava.jimport("net.imglib2.type.volatiles.VolatileShortType")
     global VolatileUnsignedShortType
-    VolatileUnsignedShortType = scyjava.jimport('net.imglib2.type.volatiles.VolatileUnsignedShortType')
+    VolatileUnsignedShortType = scyjava.jimport(
+        "net.imglib2.type.volatiles.VolatileUnsignedShortType"
+    )
     global VolatileIntType
-    VolatileIntType           = scyjava.jimport('net.imglib2.type.volatiles.VolatileIntType')
+    VolatileIntType = scyjava.jimport("net.imglib2.type.volatiles.VolatileIntType")
     global VolatileUnsignedIntType
-    VolatileUnsignedIntType   = scyjava.jimport('net.imglib2.type.volatiles.VolatileUnsignedIntType')
+    VolatileUnsignedIntType = scyjava.jimport(
+        "net.imglib2.type.volatiles.VolatileUnsignedIntType"
+    )
     global VolatileLongType
-    VolatileLongType          = scyjava.jimport('net.imglib2.type.volatiles.VolatileLongType')
+    VolatileLongType = scyjava.jimport("net.imglib2.type.volatiles.VolatileLongType")
     global VolatileUnsignedLongType
-    VolatileUnsignedLongType  = scyjava.jimport('net.imglib2.type.volatiles.VolatileUnsignedLongType')
+    VolatileUnsignedLongType = scyjava.jimport(
+        "net.imglib2.type.volatiles.VolatileUnsignedLongType"
+    )
+
 
 scyjava.when_jvm_starts(_java_setup)
 

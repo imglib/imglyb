@@ -1,13 +1,14 @@
 import threading
 
-'''
+"""
 
-'''
+"""
+
+
 class ReferenceStore(object):
-
     def __init__(self):
-        self.lock    = threading.RLock()
-        self.store   = dict()
+        self.lock = threading.RLock()
+        self.store = dict()
         self.next_id = 0
 
     def add_reference(self, ref_id, reference):

@@ -1,13 +1,13 @@
 import os
 
-__major__   = 2
-__minor__   = 0
-__patch__   = 2
-__tag__     = 'dev0'
-__version__ = f'{__major__}.{__minor__}.{__patch__}.{__tag__}'.strip('.')
+__major__ = 2
+__minor__ = 0
+__patch__ = 2
+__tag__ = "dev0"
+__version__ = f"{__major__}.{__minor__}.{__patch__}.{__tag__}".strip(".")
+
 
 class _Version(object):
-
     def major(self):
         return __major__
 
@@ -26,12 +26,15 @@ class _Version(object):
     def __str__(self):
         return self.version()
 
+
 _version = _Version()
 
 version = _version.version()
 
-_default_imglib2_imglyb_version = '1.0.1'
-_imglib2_imglyb_version         = os.getenv('IMGLIB2_IMGLYB_VERSION', _default_imglib2_imglyb_version)
+_default_imglib2_imglyb_version = "1.0.1"
+_imglib2_imglyb_version = os.getenv(
+    "IMGLIB2_IMGLYB_VERSION", _default_imglib2_imglyb_version
+)
 
 
 def set_imglib2_imglyb_version(version):
