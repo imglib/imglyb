@@ -9,3 +9,7 @@ build
 dist
 *.pyc
 imglyb.egg-info
+
+# VSCode
+
+.vscode
