@@ -1,0 +1,83 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "*-[0-9]+.*"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-cross-platform:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.6", "3.10"]
+        # Breaks due to https://github.com/jpype-project/jpype/issues/1009
+        # Should be included once the fix is released
+        exclude:
+          - os: windows-latest
+            python-version: "3.10"
+        include:
+          - os: windows-latest
+            python-version: "3.9"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-python@v3
+      with:
+        python-version: ${{matrix.python-version}}
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '8'
+        distribution: 'zulu'
+
+    - name: Install pyimagej
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install pytest-timeout
+        python -m pip install -e ".[test]"
+
+    - name: Test ImageJ
+      run: |
+        python -m pytest -s -p no:faulthandler --timeout=600 --color=yes
+        echo "Done!"
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-python@v3
+      with:
+        python-version: '3.8'
+
+    - uses: actions/setup-java@v3
+      with:
+        java-version: '8'
+        distribution: 'zulu'
+
+    - name: Install pyimagej
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -e ".[test]"
+
+    - name: Generate Report
+      run: |
+        python -m pytest --cov-report=xml --cov=.
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v2
+

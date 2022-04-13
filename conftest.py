@@ -1,5 +1,7 @@
+from re import S
 import scyjava
 import pytest
+import jgo, logging, sys
 
 
 @pytest.fixture(scope="session")
