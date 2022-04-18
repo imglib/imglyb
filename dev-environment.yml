@@ -1,6 +1,6 @@
 # You can use this environment to run the tests, when imglyb will be
 # installed from source
-name: imglyb
+name: imglyb-dev
 channels:
   - conda-forge
   - defaults
