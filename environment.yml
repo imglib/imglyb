@@ -6,3 +6,4 @@ dependencies:
   - imglyb
   - numpy
   - scyjava
+  - setuptools >= 6.2

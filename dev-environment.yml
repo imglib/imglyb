@@ -7,6 +7,7 @@ channels:
 dependencies:
   - numpy
   - scyjava
+  - setuptools >= 6.2
 
   - pytest
   - pytest-cov
