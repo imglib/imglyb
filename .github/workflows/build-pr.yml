@@ -56,33 +56,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: psf/black@stable
 
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - uses: actions/setup-python@v3
-      with:
-        python-version: '3.8'
-
-    - uses: actions/setup-java@v3
-      with:
-        java-version: '8'
-        distribution: 'zulu'
-
-    - name: Install pyimagej
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install -e ".[test]"
-
-    - name: Generate Report
-      run: |
-        python -m pytest --cov-report=xml --cov=.
-    - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v2
-
   conda-dev-test:
-    name: Test Conda Development Setup
+    name: Test Conda Development Setup And Code Coverage
     runs-on: ubuntu-latest
     defaults:
       # Steps that rely on the activated environment must be run with this shell setup.
@@ -105,5 +80,7 @@ jobs:
           mamba-version: "*"
       - name: Test imglyb
         run: |
-          python -m pytest test/ -p no:faulthandler
-
+          python -m pytest test/ -p no:faulthandler --cov-report=xml --cov=.
+      # We could do this in its own action, but we'd have to setup the environment again.
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v2
