@@ -5,7 +5,6 @@ from typing import Any, Callable, Dict
 
 import scyjava
 import scyjava.config as sjconf
-import imglyb.version
 
 from .config import get_imglib2_imglyb_version
 from .imglib_ndarray import ImgLibReferenceGuard as _ImgLibReferenceGuard
