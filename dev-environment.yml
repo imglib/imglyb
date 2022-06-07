@@ -1,0 +1,29 @@
+# Use this file to construct an environment
+# for developing Imglyb from source.
+#
+#   mamba env create -f dev-environment.yml
+#   conda activate imglyb-dev
+#
+# In addition to the dependencies needed for using Imglyb, it includes tools
+# for developer-related actions like running automated tests (pytest),
+# linting the code (black), and generating the API documentation (sphinx).
+# If you want an environment without these tools, use environment.yml.
+
+name: imglyb-dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # Project dependencies
+  - numpy
+  - scyjava
+  # Developer tools
+  - black
+  - build
+  - pytest
+  - pytest-cov
+  - setuptools_scm >= 6.2
+  # Project from source
+  - pip
+  - pip:
+    - -e '.'

@@ -20,6 +20,7 @@ import sys
 
 usage = "usage: python OSXAWTwrapper.py [module name | script path] [module or script parameters]"
 
+
 def runAwtStuff():
 
     import runpy
@@ -35,7 +36,7 @@ def runAwtStuff():
         try:
             if os.path.exists(name):
                 runpy.run_path(name, run_name="__main__")
-            else:            
+            else:
                 runpy.run_module(name, run_name="__main__")
         except Exception as e:
             print("exception occurred while running {}: {}".format(name, e))
@@ -63,10 +64,16 @@ def main():
     try:
         import objc
         from PyObjCTools import AppHelper
-        from AppKit import NSApplication, NSApp, NSObject, NSApplicationActivationPolicyRegular
+        from AppKit import (
+            NSApplication,
+            NSApp,
+            NSObject,
+            NSApplicationActivationPolicyRegular,
+        )
+
         # from Foundation import *
 
-        class AppDelegate (NSObject):
+        class AppDelegate(NSObject):
             def init(self):
                 self = objc.super(AppDelegate, self).init()
                 if self is None:
@@ -91,8 +98,8 @@ def main():
         NSApp.setActivationPolicy_(NSApplicationActivationPolicyRegular)
         AppHelper.runEventLoop()
     except ModuleNotFoundError:
-        print("Skipping OSXAWTwrapper - module 'objc' is not installed") 
+        print("Skipping OSXAWTwrapper - module 'objc' is not installed")
 
-if __name__ == '__main__' : 
+
+if __name__ == "__main__":
     main()
-
