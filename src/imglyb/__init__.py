@@ -1,6 +1,7 @@
 from functools import lru_cache
 import logging
 import sys
+from typing import Any, Callable, Dict
 
 import scyjava
 import scyjava.config as sjconf
@@ -30,28 +31,66 @@ def to_numpy(source):
     return _ImgLibReferenceGuard(source)
 
 
-def module_property(func):
-    """Decorator to turn module functions into properties.
-    Function names must be prefixed with an underscore."""
-    module = sys.modules[func.__module__]
+# This is a duplication of work in scyjava.
+# It should be removed once https://github.com/scijava/scyjava/issues/40 has been solved.
 
-    def base_getattr(name):
-        raise AttributeError(f"module '{module.__name__}' has no attribute '{name}'")
+# Set of module properties
+_CONSTANTS: Dict[str, Callable] = {}
 
-    old_getattr = getattr(module, "__getattr__", base_getattr)
 
-    def new_getattr(name):
-        if f"_{name}" == func.__name__:
-            return func()
-        else:
-            return old_getattr(name)
-
-    module.__getattr__ = new_getattr
+def constant(func: Callable[[], Any], cache=True) -> Callable[[], Any]:
+    """
+    Turns a function into a property of this module
+    Functions decorated with this property must have a
+    leading underscore!
+    :param func: The function to turn into a property
+    """
+    if func.__name__[0] != "_":
+        raise ValueError(
+            f"""Function {func.__name__} must have
+            a leading underscore in its name
+            to become a module property!"""
+        )
+    name = func.__name__[1:]
+    if cache:
+        func = (lru_cache(maxsize=None))(func)
+    _CONSTANTS[name] = func
     return func
 
 
-@module_property
-def ___version__():
-    from pkg_resources import get_distribution
+def __getattr__(name):
+    """
+    Runs as a fallback when this module does not have an
+    attribute.
+    :param name: The name of the attribute being searched for.
+    """
+    if name in _CONSTANTS:
+        return _CONSTANTS[name]()
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-    return get_distribution("imglyb").version
+
+@constant
+def ___version__():
+    # First pass: use the version output by setuptools_scm
+    try:
+        import imglyb.version
+
+        return imglyb.version.version
+    except ImportError:
+        pass
+    # Second pass: use importlib.metadata
+    try:
+        from importlib.metadata import version, PackageNotFoundError
+
+        return version("imglyb")
+    except ImportError or PackageNotFoundError:
+        pass
+    # Third pass: use pkg_resources
+    try:
+        from pkg_resources import get_distribution
+
+        return get_distribution("imglyb").version
+    except ImportError:
+        pass
+    # Fourth pass: Give up
+    return "Cannot determine version! Ensure pkg_resources is installed!"
