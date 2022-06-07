@@ -36,7 +36,8 @@ def _java_setup():
         Views = scyjava.jimport("net.imglib2.view.Views")
     except TypeError as e:
         _logger.error(
-            "Failed to import ImgLib2 helper classes. Please ensure imglib2-imglyb is present on the classpath."
+            "Failed to import ImgLib2 helper classes. "
+            "Please ensure imglib2-imglyb is present on the classpath."
         )
         raise e
 
@@ -137,7 +138,7 @@ def _to_imglib(source):
     long_address = JLong(address)
     long_arr_source = JArray(JLong)(source.shape[::-1])
 
-    if not source.dtype in numpy_dtype_to_conversion_method:
+    if source.dtype not in numpy_dtype_to_conversion_method:
         raise NotImplementedError(
             "Cannot convert dtype to ImgLib2 type yet: {}".format(source.dtype)
         )
