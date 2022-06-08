@@ -95,7 +95,7 @@ def main():
             def applicationDidFinishLaunching_(self, aNotification):
                 self.performSelectorInBackground_withObject_("runjava:", 0)
 
-        app = NSApplication.sharedApplication()
+        NSApplication.sharedApplication()
         delegate = AppDelegate.alloc().init()
         NSApp().setDelegate_(delegate)
         # this is necessary to have keyboard events sent to the UI;
