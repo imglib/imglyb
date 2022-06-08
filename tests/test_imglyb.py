@@ -3,9 +3,8 @@ import pytest
 import imglyb
 import numpy as np
 import scyjava
-from scyjava import config
 
-from imglyb.imglib_ndarray import ImgLibReferenceGuard, NumpyView
+from imglyb.imglib_ndarray import NumpyView
 
 
 class TestImglyb(object):
@@ -107,22 +106,22 @@ class TestRAIAsNumpyArray:
     def test_all(self, img, raiAsNumpyArray: np.ndarray):
         """Tests any behavior."""
         # simple_img starts out with a one -> Should be true
-        assert raiAsNumpyArray.all() == True
-        assert np.all(raiAsNumpyArray) == True
+        assert raiAsNumpyArray.all()
+        assert np.all(raiAsNumpyArray)
 
         # set all values to zero
         cursor = img.cursor()
         while cursor.hasNext():
             cursor.next().set(0)
             # should be false
-            assert raiAsNumpyArray.all() == False
-            assert np.all(raiAsNumpyArray) == False
+            assert not raiAsNumpyArray.all()
+            assert not np.all(raiAsNumpyArray)
 
     def test_any(self, img, raiAsNumpyArray: np.ndarray):
         """Tests any behavior."""
         # simple_img starts out with a one -> Should be true
-        assert raiAsNumpyArray.any() == True
-        assert np.any(raiAsNumpyArray) == True
+        assert raiAsNumpyArray.any()
+        assert np.any(raiAsNumpyArray)
 
         # set all values to zero
         cursor = img.cursor()
@@ -130,5 +129,5 @@ class TestRAIAsNumpyArray:
             cursor.next().set(0)
 
         # now should be false
-        assert raiAsNumpyArray.any() == False
-        assert np.any(raiAsNumpyArray) == False
+        assert not raiAsNumpyArray.any()
+        assert not np.any(raiAsNumpyArray)

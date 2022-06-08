@@ -18,7 +18,11 @@ import os
 import sys
 
 
-usage = "usage: python OSXAWTwrapper.py [module name | script path] [module or script parameters]"
+usage = (
+    "usage: python OSXAWTwrapper.py "
+    "[module name | script path] "
+    "[module or script parameters]"
+)
 
 
 def runAwtStuff():
@@ -27,12 +31,14 @@ def runAwtStuff():
 
     # user can provide either a module or a path to a script;
     #   either way, need to remove it from sys.argv,
-    #   because the wrapped module or script might parse sys.argv for its own reasons:
+    # because the wrapped module or script might parse sys.argv for its own
+    # reasons:
     if len(sys.argv) > 1:
         name = sys.argv[1]
         sys.argv.remove(name)
 
-        # whether module or script, need to set the run_name for things to work as expected!
+        # whether module or script, need to set the run_name for things to work
+        # as expected!
         try:
             if os.path.exists(name):
                 runpy.run_path(name, run_name="__main__")
@@ -41,7 +47,7 @@ def runAwtStuff():
         except Exception as e:
             print("exception occurred while running {}: {}".format(name, e))
 
-            ## lots can go wrong here, and exceptions can bubble up from
+            # lots can go wrong here, and exceptions can bubble up from
             #   the Java layer, too; uncomment lines below to print
             #   more information on exception
             # note: different exceptions have different attributes, so you
@@ -53,8 +59,8 @@ def runAwtStuff():
             # print("e.stacktrace: ")
             # for line in e.stacktrace:
             #     print("\t", line)
-            ## if Java throws a reflection error, you might want this:
-            ## print("e.innermessage", e.innermessage)
+            # if Java throws a reflection error, you might want this:
+            #  print("e.innermessage", e.innermessage)
     else:
         print(usage)
         print("no module or script specified")
@@ -89,7 +95,7 @@ def main():
             def applicationDidFinishLaunching_(self, aNotification):
                 self.performSelectorInBackground_withObject_("runjava:", 0)
 
-        app = NSApplication.sharedApplication()
+        NSApplication.sharedApplication()
         delegate = AppDelegate.alloc().init()
         NSApp().setDelegate_(delegate)
         # this is necessary to have keyboard events sent to the UI;

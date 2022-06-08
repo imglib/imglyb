@@ -18,8 +18,10 @@ dependencies:
   - numpy
   - scyjava
   # Developer tools
+  - autopep8
   - black
   - build
+  - flake8
   - pytest
   - pytest-cov
   - setuptools_scm >= 6.2

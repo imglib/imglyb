@@ -11,9 +11,7 @@ dist
 imglyb.egg-info
 
 # setuptools_scm
-
-src/imglyb/_version.py
+src/imglyb/version.py
 
 # VSCode
-
 .vscode

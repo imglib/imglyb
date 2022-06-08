@@ -1,5 +1,4 @@
 import ctypes
-from typing import Any, Callable, Iterable, Mapping, MutableSequence
 
 import numpy as np
 import jpype
@@ -78,7 +77,7 @@ def get_address(rai):
         if "basictypelongaccess.unsafe" in access_type:
             return jpype.JObject(access, access_type).getAddress()
         else:
-            raise ValueError("Excpected unsafe access but got {}".format(access_type))
+            raise ValueError(f"Excpected unsafe access but got {access_type}")
 
     else:
         raise ValueError(
@@ -102,7 +101,6 @@ class ImgLibReferenceGuard(np.ndarray):
         pointer = ctypes.cast(
             address, ctypes.POINTER(ctype_conversions_imglib[imglib_type])
         )
-        order = "C"
 
         # Create a new numpy array
         obj = np.ndarray.__new__(
@@ -208,17 +206,17 @@ def implements(np_function):
 
 
 @implements(np.all)
-def any(arr: NumpyView):
-    for l in np.ndindex(*arr.shape):
-        if not arr[l]:
+def np_all(arr: NumpyView):
+    for index in np.ndindex(*arr.shape):
+        if not arr[index]:
             return False
     return True
 
 
 @implements(np.any)
-def any(arr: NumpyView):
-    for l in np.ndindex(*arr.shape):
-        if arr[l]:
+def np_any(arr: NumpyView):
+    for index in np.ndindex(*arr.shape):
+        if arr[index]:
             return True
     return False
 

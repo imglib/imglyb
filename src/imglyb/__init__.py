@@ -1,6 +1,5 @@
 from functools import lru_cache
 import logging
-import sys
 from typing import Any, Callable, Dict
 
 import scyjava
@@ -15,6 +14,15 @@ from .ndarray_like_as_img import (
 )
 from .util import to_imglib, to_imglib_argb
 
+# Declare public API in a PEP8-compliant way.
+# https://peps.python.org/pep-0008/#public-and-internal-interfaces
+__all__ = [
+    "as_cell_img",
+    "as_cell_img_with_array_accesses",
+    "as_cell_img_with_native_accesses",
+    "to_imglib",
+    "to_imglib_argb",
+]
 
 _logger = logging.getLogger(__name__)
 
@@ -31,7 +39,8 @@ def to_numpy(source):
 
 
 # This is a duplication of work in scyjava.
-# It should be removed once https://github.com/scijava/scyjava/issues/40 has been solved.
+# It should be removed once https://github.com/scijava/scyjava/issues/40
+# has been solved.
 
 # Set of module properties
 _CONSTANTS: Dict[str, Callable] = {}
