@@ -26,7 +26,6 @@ usage = (
 
 
 def runAwtStuff():
-
     import runpy
 
     # user can provide either a module or a path to a script;
