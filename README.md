@@ -59,7 +59,7 @@ rather than system-wide.
 First, install the prerequisites above. Then run:
 
 ```shell
-git clone git://github.com/imglib/imglyb
+git clone https://github.com/imglib/imglyb
 cd imglyb
 pip install -e .
 ```
