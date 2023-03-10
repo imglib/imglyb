@@ -145,7 +145,6 @@ def identity(x):
 
 
 def _chunk_index_to_slices(shape, chunk_shape, cell_index):
-
     grid_dimensions = tuple(
         int(math.ceil(s / sh)) for s, sh in zip(shape, chunk_shape)
     )[::-1]
@@ -194,7 +193,6 @@ def _get_chunk_access_array(
 def _get_chunk_access_unsafe(
     array, chunk_shape, index, chunk_as_array, reference_store
 ):
-
     try:
         chunk = np.ascontiguousarray(
             _get_chunk(array, chunk_shape, index, chunk_as_array)

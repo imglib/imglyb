@@ -1,4 +1,4 @@
-from jpype import JArray, JInt
+from jpype import JArray, JInt, JLong
 import pytest
 import imglyb
 import numpy as np
@@ -41,6 +41,62 @@ class TestImglyb(object):
         cursor = unsafe_img.cursor()
         while cursor.hasNext():
             assert cursor.next().get() == fill_value
+
+    parameterizations = [
+        (True, np.bool_, "net.imglib2.type.logic.NativeBoolType"),
+        (-100, np.int8, "net.imglib2.type.numeric.integer.ByteType"),
+        (200, np.uint8, "net.imglib2.type.numeric.integer.UnsignedByteType"),
+        (-100, np.int16, "net.imglib2.type.numeric.integer.ShortType"),
+        (200, np.uint16, "net.imglib2.type.numeric.integer.UnsignedShortType"),
+        (-100, np.int32, "net.imglib2.type.numeric.integer.IntType"),
+        (200, np.uint32, "net.imglib2.type.numeric.integer.UnsignedIntType"),
+        (-100, np.int64, "net.imglib2.type.numeric.integer.LongType"),
+        (200, np.uint64, "net.imglib2.type.numeric.integer.UnsignedLongType"),
+        (5.5, np.float32, "net.imglib2.type.numeric.real.FloatType"),
+        (5.5, np.float64, "net.imglib2.type.numeric.real.DoubleType"),
+    ]
+
+    @pytest.mark.parametrize("value, dtype, jtype", parameterizations)
+    def test_np_arr_to_RAI_realType(self, value, dtype, jtype):
+        """Tests convesion of each supported Imglib2 data type"""
+        img = np.array([[value]], dtype=dtype)
+        java_img = imglyb.to_imglib(img)
+        RAI = scyjava.jimport("net.imglib2.RandomAccessibleInterval")
+        assert isinstance(java_img, RAI)
+        ra = java_img.randomAccess()
+        element = ra.setPositionAndGet(JArray(JInt)(2))
+        assert isinstance(element, scyjava.jimport(jtype))
+        assert value == element.get()
+
+    parameterizations = [
+        (-100, np.int8, "bytes"),
+        (200, np.uint8, "unsignedBytes"),
+        (-100, np.int16, "shorts"),
+        (-100, np.int32, "ints"),
+        (200, np.uint32, "unsignedInts"),
+        (-100, np.int64, "longs"),
+        (200, np.uint64, "unsignedLongs"),
+        (5.5, np.float32, "floats"),
+        (5.5, np.float64, "doubles"),
+    ]
+
+    @pytest.mark.parametrize("value, dtype, func", parameterizations)
+    def test_RAI_realType_to_np_arr(self, value, dtype, func):
+        """Tests convesion of each supported Imglib2 data type"""
+        # Create the test image
+        dims = JArray(JLong)(2)
+        dims[:] = [1, 1]
+        UnsafeImgs = scyjava.jimport("net.imglib2.img.unsafe.UnsafeImgs")
+        function = getattr(UnsafeImgs, func)
+        assert function
+        j_img = function(dims)
+        # Set the only value in the image to value
+        j_img.randomAccess().setPositionAndGet(JArray(JInt)(2)).set(value)
+        # Convert the image to a numpy array
+        img = imglyb.to_numpy(j_img)
+        assert isinstance(img, np.ndarray)
+        assert dtype == img.dtype
+        assert value == img[0, 0]
 
 
 class TestRAIAsNumpyArray:

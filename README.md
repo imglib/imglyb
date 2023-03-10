@@ -1,4 +1,4 @@
-[![build status](https://github.com/imglib/imglyb/actions/workflows/python-test-conda.yml/badge.svg)](https://github.com/imglib/imglyb/actions/workflows/python-test-conda.yml)
+[![build status](https://github.com/imglib/imglyb/actions/workflows/build.yml/badge.svg)](https://github.com/imglib/imglyb/actions/workflows/build.yml)
 
 # imglyb
 
