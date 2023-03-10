@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "imglyb"
-version = "2.1.0"
+version = "2.1.1.dev0"
 description = "A python module to bring together the worlds of NumPy (Python) and ImgLib2 (Java)."
 license = {text = "Simplified BSD License"}
 authors = [
