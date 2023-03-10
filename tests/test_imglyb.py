@@ -43,7 +43,7 @@ class TestImglyb(object):
             assert cursor.next().get() == fill_value
 
     parameterizations = [
-        (True, np.bool8, "net.imglib2.type.logic.NativeBoolType"),
+        (True, np.bool_, "net.imglib2.type.logic.NativeBoolType"),
         (-100, np.int8, "net.imglib2.type.numeric.integer.ByteType"),
         (200, np.uint8, "net.imglib2.type.numeric.integer.UnsignedByteType"),
         (-100, np.int16, "net.imglib2.type.numeric.integer.ShortType"),
