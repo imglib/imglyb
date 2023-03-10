@@ -3,7 +3,7 @@ from setuptools_scm import get_version
 
 version = get_version(root="../..", relative_to=__file__)
 
-_default_imglib2_imglyb_version = "1.0.1"
+_default_imglib2_imglyb_version = "1.1.0"
 _imglib2_imglyb_version = os.getenv(
     "IMGLIB2_IMGLYB_VERSION", _default_imglib2_imglyb_version
 )
