@@ -32,8 +32,8 @@ dependencies:
   - flake8
   - pytest
   - pytest-cov
-  - setuptools_scm >= 6.2
   # Project from source
   - pip
   - pip:
+    - validate-pyproject[all]
     - -e '.'

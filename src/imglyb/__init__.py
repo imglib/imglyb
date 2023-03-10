@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict
 import scyjava
 import scyjava.config as sjconf
 
-from .config import get_imglib2_imglyb_version
+from .config import get_imglib2_imglyb_version, version as __version__
 from .imglib_ndarray import ImgLibReferenceGuard as _ImgLibReferenceGuard
 from .ndarray_like_as_img import (
     as_cell_img,
@@ -23,6 +23,8 @@ __all__ = [
     "to_imglib",
     "to_imglib_argb",
 ]
+
+__author__ = "ImgLib2 developers"
 
 _logger = logging.getLogger(__name__)
 
@@ -75,30 +77,3 @@ def __getattr__(name):
     if name in _CONSTANTS:
         return _CONSTANTS[name]()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
-
-
-@constant
-def ___version__():
-    # First pass: use the version output by setuptools_scm
-    try:
-        import imglyb.version
-
-        return imglyb.version.version
-    except ImportError:
-        pass
-    # Second pass: use importlib.metadata
-    try:
-        from importlib.metadata import version, PackageNotFoundError
-
-        return version("imglyb")
-    except ImportError or PackageNotFoundError:
-        pass
-    # Third pass: use pkg_resources
-    try:
-        from pkg_resources import get_distribution
-
-        return get_distribution("imglyb").version
-    except ImportError:
-        pass
-    # Fourth pass: Give up
-    return "Cannot determine version! Ensure pkg_resources is installed!"

@@ -1,7 +1,8 @@
 import os
-from setuptools_scm import get_version
 
-version = get_version(root="../..", relative_to=__file__)
+from scyjava import get_version
+
+version = get_version("imglyb")
 
 _default_imglib2_imglyb_version = "1.1.0"
 _imglib2_imglyb_version = os.getenv(
