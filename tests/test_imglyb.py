@@ -1,9 +1,9 @@
-from jpype import JArray, JInt, JLong
-import pytest
-import imglyb
 import numpy as np
+import pytest
 import scyjava
+from jpype import JArray, JInt, JLong
 
+import imglyb
 from imglyb.imglib_ndarray import NumpyView
 
 

@@ -2,8 +2,7 @@ import logging
 
 import numpy as np
 import scyjava
-
-from jpype import JImplements, JOverride, JLong, JArray
+from jpype import JArray, JImplements, JLong, JOverride
 
 _logger = logging.getLogger(__name__)
 

@@ -17,7 +17,6 @@ and it will be executed on the correct thread.
 import os
 import sys
 
-
 usage = (
     "usage: python OSXAWTwrapper.py "
     "[module name | script path] "
@@ -68,13 +67,13 @@ def runAwtStuff():
 def main():
     try:
         import objc
-        from PyObjCTools import AppHelper
         from AppKit import (
-            NSApplication,
             NSApp,
-            NSObject,
+            NSApplication,
             NSApplicationActivationPolicyRegular,
+            NSObject,
         )
+        from PyObjCTools import AppHelper
 
         # from Foundation import *
 

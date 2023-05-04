@@ -1,7 +1,7 @@
 import ctypes
 
-import numpy as np
 import jpype
+import numpy as np
 import scyjava
 
 from imglyb import util

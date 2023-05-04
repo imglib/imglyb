@@ -1,9 +1,9 @@
 from pathlib import Path
 
+import scyjava
 import toml
 
 import imglyb
-import scyjava
 
 
 def _expected_version():

@@ -1,16 +1,12 @@
 import logging
 import math
+
 import numpy as np
 import scyjava
-
 from jpype import JException, JImplements, JOverride
 
-from . import accesses
-from . import caches
-from . import types
-from . import util
+from . import accesses, caches, types, util
 from .reference_store import ReferenceStore
-
 
 _global_reference_store = ReferenceStore()
 
