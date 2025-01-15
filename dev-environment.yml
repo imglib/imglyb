@@ -26,6 +26,7 @@ dependencies:
   - scyjava
   # Developer tools
   - build
+  - pre-commit
   - pytest
   - pytest-cov
   - ruff

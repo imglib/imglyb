@@ -52,6 +52,7 @@ dependencies = [
 dev = [
     "build",
     "pytest",
+    "pre-commit",
     "pytest-cov",
     "ruff",
     "toml",
