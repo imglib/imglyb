@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # ruff version
+    rev: v0.9.1
+    hooks:
+      # run the linter
+      - id: ruff
+      # run the formatter
+      - id: ruff-format
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.10.1
+    hooks:
+      - id: validate-pyproject
