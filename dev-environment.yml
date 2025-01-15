@@ -25,17 +25,13 @@ dependencies:
   - numpy
   - scyjava
   # Developer tools
-  - autopep8
-  - black
   - build
-  - flake8
-  - flake8-pyproject
-  - isort
   - pytest
   - pytest-cov
+  - ruff
   - toml
   # Project from source
   - pip
   - pip:
     - validate-pyproject[all]
-    - -e '.'
+    - -e .
