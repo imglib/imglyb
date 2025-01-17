@@ -25,7 +25,7 @@ dependencies:
   - numpy
   - scyjava
   # Developer tools
-  - build
+  - python-build
   - pre-commit
   - pytest
   - pytest-cov
