@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "imglyb"
 version = "2.1.1.dev0"
 description = "A python module to bring together the worlds of NumPy (Python) and ImgLib2 (Java)."
-license = {text = "Simplified BSD License"}
+license = "BSD-2-Clause"
 authors = [
     {name = "Philipp Hanslovsky"},
     {name = "Curtis Rueden", email = "ctrueden@wisc.edu"},
@@ -27,7 +27,6 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: BSD License",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: Unix",
     "Operating System :: MacOS",
