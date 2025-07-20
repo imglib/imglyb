@@ -15,3 +15,7 @@ src/imglyb/version.py
 
 # VSCode
 .vscode
+
+# uv
+/.venv
+/uv.lock

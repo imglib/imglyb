@@ -46,8 +46,7 @@ dependencies = [
     "scyjava >= 1.3.0",
 ]
 
-[project.optional-dependencies]
-# NB: Keep this in sync with dev-environment.yml!
+[dependency-groups]
 dev = [
     "build",
     "pytest",
@@ -73,7 +72,6 @@ include-package-data = false
 where = ["src"]
 namespaces = false
 
-# ruff configuration
 [tool.ruff]
 line-length = 88
 src = ["src", "tests"]
