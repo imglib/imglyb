@@ -1,12 +1,15 @@
-[![build status](https://github.com/imglib/imglyb/actions/workflows/build.yml/badge.svg)](https://github.com/imglib/imglyb/actions/workflows/build.yml)
-
 # imglyb
+
+[![License](https://img.shields.io/pypi/l/imglyb.svg)](https://github.com/imglib/imglyb/raw/main/LICENSE.txt)
+[![PyPI](https://img.shields.io/pypi/v/imglyb.svg)](https://pypi.org/project/imglyb)
+[![Python Version](https://img.shields.io/pypi/pyversions/imglyb.svg)](https://python.org)
+[![Build Status](https://github.com/imglib/imglyb/actions/workflows/build.yml/badge.svg)](https://github.com/imglib/imglyb/actions/workflows/build.yml)
 
 `imglyb` aims at connecting two worlds that have been seperated for too long:
  * Python with [numpy](https://github.com/numpy/numpy)
  * Java with [ImgLib2](https://github.com/imglib/imglib2)
 
-`imglyb` uses [jpype](http://jpype.org) to access `numpy` arrays and expose
+`imglyb` uses [jpype](https://jpype.org) to access `numpy` arrays and expose
 them to `ImgLib2` through
 [`imglib2-imglyb`](https://github.com/imglib/imglib2-imglyb).
 This means **shared memory** between `numpy` and `ImgLib2`, i.e. any `ImgLib2`
